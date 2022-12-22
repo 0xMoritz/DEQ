@@ -1,5 +1,7 @@
 #include "DEQ.h"
 
+const int CONSOLE_WIDTH = 93;
+
 const int KEY_ENTER = 10;
 const int KEY_ESCAPE = 27;
 const int KEY_UP = 65;
@@ -23,76 +25,127 @@ const int KEY_KOMMA = 44;
 
 using namespace std;
 
+string debugText = "";
+
 // Static variable Initilization
 string FilePrinter::outputPath{"latex/"};
+Cursor* Cursor::activeCursor = nullptr;
 
-int PressUpArrow(Term* t)
+void InsertDigit(Term*& t, int digit)
+{
+	Cursor* c = Cursor::GetActive();
+	assert(c != nullptr);
+	if (c->GetLeft() != nullptr)
+	{
+		if (typeid(*c->GetLeft()) == typeid(Number))
+		{
+			dynamic_cast<Number*>(c->GetLeft())->AppendDigit(digit);
+			return;
+		}
+	}
+
+	// Always create the parent first
+	Connect2* newParent = new Connect2(c->GetParent());
+	if (c->GetParent() == nullptr)// Create new parent element, if the cursors parent is nullptr, than this will simply be handed over, however than we'll have to change the base Term element t
+	{
+		assert(t==c);
+		t = static_cast<Term*>(newParent);
+	}
+	Number* newNumber = new Number(newParent, string(1, static_cast<char>(digit)));
+	newParent->SetSub1(newNumber);
+	c->SetParent(newParent);
+	c->SetLeft(newNumber);
+	newParent->SetSub2(c);
+}
+
+
+
+void PrintTermToConsole(Term*& t)
+{
+	cout << t->Print() << endl;
+}
+
+void PrintLatexToConsole(Term*& t)
+{
+	cout << t->Tex() << endl;
+}
+
+int PrintTreeToConsole(Term*& t) // return maxDepth
+{
+	StringTree tree{};
+	int maxDepth = 0;
+	t->Tree(tree, maxDepth);
+	cout << tree.Write(maxDepth) << endl;
+	return maxDepth;
+}
+
+int PressUpArrow(Term*& t)
 {
 	throw (string)"No Action set for 'up arrow'";
 	return 0;
 }
-int PressDownArrow(Term* t)
+int PressDownArrow(Term*& t)
 {
 	throw (string)"No Action set for 'down arrow'";
 	return 0;
 }
-int PressRightArrow(Term* t)
+int PressRightArrow(Term*& t)
 {
 	throw (string)"No Action set for 'right arrow'";
 	return 0;
 }
-int PressLeftArrow(Term* t)
+int PressLeftArrow(Term*& t)
 {
 	throw (string)"No Action set for 'left arrow'";
 	return 0;
 }
-int PressNumber(Term* t, int num)
+int PressNumber(Term*& t, int digit)
 {
-	throw (string)"No Action set for '" + to_string(num) + "'";
+	InsertDigit(t, digit);
 	return 0;
 }
-int PressLetter(Term* t, char ch)
+int PressLetter(Term*& t, char ch)
 {
 	throw (string)"No Action set for '" + ch + "'";
 	return 0;
 }
-int PressEnter(Term* t)
+int PressEnter(Term*& t)
 {
-	throw (string)"No Action set for 'Enter'";
-	return 0;
+	PrintLatexToConsole(t);
+	return 2;
 }
-int PressPlus(Term* t)
+int PressPlus(Term*& t)
 {
 	throw (string)"No Action set for '+'";
 	return 0;
 }
-int PressMinus(Term* t)
+int PressMinus(Term*& t)
 {
 	throw (string)"No Action set for '-'";
 	return 0;
 }
-int PressKomma(Term* t)
+int PressKomma(Term*& t)
 {
 	throw (string)"No Action set for ','";
 	return 0;
 }
-int PressDecimal(Term* t)
+int PressDecimal(Term*& t)
 {
 	throw (string)"No Action set for '.'";
 	return 0;
 }
-int PressAsterisk(Term* t)
+int PressAsterisk(Term*& t)
 {
 	throw (string)"No Action set for '*'";
 	return 0;
 }
-int PressSlash(Term* t)
+int PressSlash(Term*& t)
 {
 	throw (string)"No Action set for '/'";
 	return 0;
 }
 
-int Input(Term* t, char& key) // return 3 to exit InteractiveInput, -1 to exit program, 1 if input is not readable, 0 otherwise
+int Input(Term*& t, char& key) // return 3 to exit InteractiveInput, -1 to exit program, 1 if input is not readable, 0 otherwise
 {
 	if (read(STDIN_FILENO, &key, 1) != 1)
 	{
@@ -198,23 +251,9 @@ int Input(Term* t, char& key) // return 3 to exit InteractiveInput, -1 to exit p
 	return key;
 }
 
-void PrintTermToConsole(Term* t)
-{
-	cout << t->Print() << endl;
-}
-
-int PrintTreeToConsole(Term* t) // return maxDepth
-{
-	StringTree tree{};
-	int maxDepth = 0;
-	t->Tree(tree, maxDepth);
-	cout << tree.Write(maxDepth) << endl;
-	return maxDepth;
-}
-
 
 // Print Latex Equation
-int Latex(Term* t)
+int Latex(Term*& t)
 {
 	// Write to file
 	string compilePdfLatex =
@@ -242,7 +281,7 @@ int Latex(Term* t)
 }
 
 // Interactive equation with instant feedback
-int InteractiveInput(Term* t)
+int InteractiveInput(Term*& t)
 {
 	// put terminal into non-canonical mode
 	struct termios oldTermios;
@@ -266,6 +305,10 @@ int InteractiveInput(Term* t)
 				res = 0;
 				break;
 			}
+			else if (stat == 2)
+			{
+				continue;
+			}
 			else if (stat == -1)
 			{
 				res = -1;
@@ -284,6 +327,12 @@ int InteractiveInput(Term* t)
 				PrintTermToConsole(t);
 				depth = PrintTreeToConsole(t);
 				//cout << (int)key << endl;
+
+				// Debug Line
+				if (debugText.length() > CONSOLE_WIDTH)
+					debugText = debugText.substr(debugText.length() - CONSOLE_WIDTH, CONSOLE_WIDTH); // Restrict length to prevent overflow
+				cout << string(CONSOLE_WIDTH - debugText.length(), ' ') << debugText << endl;
+				//cout << "\b";
 			}
 		}
 		catch (string err)
@@ -301,7 +350,8 @@ int InteractiveInput(Term* t)
 // Standard Loop for manipulation
 void ShellLoop()
 {
-	Term* t = new Addition(new list<Term*>{new Power(new Number("1"), new Multiplication(new list<Term*>{new Number("9"), new Number("8")})), new Number("2"), new Number("3"), new Connect2{new Text("Hallo"), new Power(new Variable("\\psi_{4x}"), new Text("Welt"))}});
+	Term* t = new Cursor(nullptr);
+	Cursor::SetActive(dynamic_cast<Cursor*>(t));
 
 	while (1)
 	{
@@ -336,32 +386,8 @@ void ShellLoop()
 
 int main(int argc, char **argv)
 {
+	debugText = "";
 	ShellLoop();
 	cout << "Exit." << endl;
 	return 0;
 }
-
-
-/*
-void pause(int t) {
-	std::this_thread::sleep_for(std::chrono::milliseconds(t));
-}
-
-static const int width = 40;
-
-void show_percent(int i) {
-	 int dashes = (width * i)/100;
-
-	 std::cout << '|' << std::left << std::setw(width) << std::string(dashes, '-') << '|' << std::setw(3) << i << "%";
-}
-
-
-// percent bar
-int main() {
-
-	for (int i=0; i<101; i++) {
-		show_percent(i);
-		std::cout << std::string(width+6, '\b');
-		pause(100);
-	}
-}*/

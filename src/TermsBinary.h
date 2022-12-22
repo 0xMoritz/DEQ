@@ -14,7 +14,7 @@
 class Connect2 : public BinaryTerm
 {
 public:
-	Connect2(Term* _sub1, Term* _sub2);
+	Connect2(Term* _parent);
 	std::string Print() override;
 	std::string Tex() override;
 };
@@ -22,7 +22,7 @@ public:
 class Power : public BinaryTerm
 {
 public:
-	Power(Term* _base, Term* _exponent);
+	Power(Term* _parent, Term* _base, Term* _exponent);
 	std::string Print() override;
 	std::string Tex() override;
 };
@@ -30,7 +30,7 @@ public:
 class Subscript : public BinaryTerm
 {
 public:
-	Subscript(Term* _main, Term* _sub);
+	Subscript(Term* _parent, Term* _main, Term* _sub);
 	std::string Print() override;
 	std::string Tex() override;
 };

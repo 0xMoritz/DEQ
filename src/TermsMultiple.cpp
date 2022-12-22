@@ -4,7 +4,7 @@ using namespace std;
 
 // class Addition
 
-Addition::Addition(list<Term*>* _subTerms)
+Addition::Addition(Term* _parent, list<Term*>* _subTerms) : MultiTerm(_parent)
 {
 	treeLabel = "add";
 	subTerms = _subTerms;
@@ -21,6 +21,7 @@ string Addition::Print()
 		s += subTerms->front()->Print();
 		for (auto summand = ++subTerms->begin(); summand != subTerms->end(); summand++)
 		{
+			assert(*summand!=nullptr);
 			s += " + " + (**summand).Print();
 		}
 		return s;
@@ -35,6 +36,7 @@ string Addition::Tex()
 		s += subTerms->front()->Tex();
 		for (auto summand = ++subTerms->begin(); summand != subTerms->end(); summand++)
 		{
+			assert(*summand!=nullptr);
 			s += " + " + (**summand).Tex();
 		}
 		return s;
@@ -45,7 +47,7 @@ string Addition::Tex()
 
 // class Addition
 
-Multiplication::Multiplication(list<Term*>* _subTerms)
+Multiplication::Multiplication(Term* _parent, list<Term*>* _subTerms) : MultiTerm(_parent)
 {
 	treeLabel = "mul";
 	subTerms = _subTerms;
@@ -62,6 +64,7 @@ string Multiplication::Print()
 		s += subTerms->front()->Print();
 		for (auto factor = ++subTerms->begin(); factor != subTerms->end(); factor++)
 		{
+			assert(*factor!=nullptr);
 			if (typeid(**factor) == typeid(Number))
 			{
 				s+= "×";
@@ -80,6 +83,7 @@ string Multiplication::Tex()
 		s += subTerms->front()->Tex();
 		for (auto factor = ++subTerms->begin(); factor != subTerms->end(); factor++)
 		{
+			assert(*factor!=nullptr);
 			if (typeid(**factor) == typeid(Number))
 			{
 				s+= "\\times";

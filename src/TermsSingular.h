@@ -16,7 +16,7 @@ class Brackets : SingularTerm
 private:
 	Term* subTerm;
 public:
-	Brackets(Term* _subTerm);
+	Brackets(Term* _parent, Term* _subTerm);
 	std::string Print() override;
 	std::string Tex() override;
 };

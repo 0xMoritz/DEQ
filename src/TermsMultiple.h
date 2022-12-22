@@ -15,7 +15,7 @@
 class Addition : public MultiTerm
 {
 public:
-	Addition(std::list<Term*>* _subTerms);
+	Addition(Term* _parent, std::list<Term*>* _subTerms);
 	void Append(Term* t);
 	std::string Print() override;
 	std::string Tex() override;
@@ -25,7 +25,7 @@ public:
 class Multiplication : public MultiTerm
 {
 public:
-	Multiplication(std::list<Term*>* _subTerms);
+	Multiplication(Term* _parent, std::list<Term*>* _subTerms);
 	void Append(Term* t);
 	std::string Print() override;
 	std::string Tex() override;

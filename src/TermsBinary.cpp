@@ -4,22 +4,26 @@ using namespace std;
 
 // class Connect2
 
-Connect2::Connect2(Term* _sub1, Term* _sub2) : BinaryTerm(_sub1, _sub2)
+Connect2::Connect2(Term* _parent) : BinaryTerm(_parent)
 {
 	treeLabel = "co2";
 }
 string Connect2::Print()
 {
+	assert(sub1!=nullptr);
+	assert(sub2!=nullptr);
 	return sub1->Print() + sub2->Print();
 }
 string Connect2::Tex()
 {
+	assert(sub1!=nullptr);
+	assert(sub2!=nullptr);
 	return sub1->Tex() + sub2->Tex();
 }
 
 
 // class Power
-Power::Power(Term* _base, Term* _exponent) : BinaryTerm(_base, _exponent)
+Power::Power(Term* _parent, Term* _base, Term* _exponent) : BinaryTerm(_parent, _base, _exponent)
 {
 	treeLabel = "pow";
 	sub2 = _base;
@@ -28,25 +32,31 @@ Power::Power(Term* _base, Term* _exponent) : BinaryTerm(_base, _exponent)
 string Power::Print()
 {
 	string s = "";
+	assert(sub1!=nullptr);
+	assert(sub2!=nullptr);
 	s += "(" + sub1->Print() + ")^(" + sub2->Print() + ")";
 	return s;
 }
 string Power::Tex()
 {
 	string s = "";
+	assert(sub1!=nullptr);
+	assert(sub2!=nullptr);
 	s += "{" + sub1->Tex() + "}^{" + sub2->Tex() + "}";
 	return s;
 }
 
 
 // class Subscript
-Subscript::Subscript(Term* _main, Term* _sub) : BinaryTerm(_main, _sub)
+Subscript::Subscript(Term* _parent, Term* _main, Term* _sub) : BinaryTerm(_parent, _main, _sub)
 {
 	treeLabel = "sub";
 }
 string Subscript::Print()
 {
 	string s = "";
+	assert(sub1!=nullptr);
+	assert(sub2!=nullptr);
 	s += sub1->Print() + "_" + sub2->Print();
 	return s;
 }

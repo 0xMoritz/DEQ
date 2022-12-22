@@ -2,7 +2,18 @@
 
 using namespace std;
 
-
+Term::Term(Term* _parent)
+{
+	parent = _parent;
+}
+Term* Term::GetParent()
+{
+	return parent;
+}
+void Term::SetParent(Term* newParent)
+{
+	parent = newParent;
+}
 Term Term::Derivative()
 {
 	return (*this);
@@ -22,16 +33,43 @@ int Term::Tree(StringTree& tree, int& maxDepth)
 	tree.s = "(" + treeLabel + ")";
 	return treeLabel.length() + 2;
 }
-
+Term* Term::WithoutCursor(Term* t)
+{
+	return t;//TODO
+}
 
 // class SingularTerm
+SingularTerm::SingularTerm(Term* _parent) : Term(_parent)
+{
+
+}
 
 
 // BinaryTerm
-BinaryTerm::BinaryTerm(Term* _sub1, Term* _sub2)
+BinaryTerm::BinaryTerm(Term* _parent) : Term(_parent)
+{
+
+}
+BinaryTerm::BinaryTerm(Term* _parent, Term* _sub1, Term* _sub2) : Term(_parent)
 {
 	sub1 = _sub1;
 	sub2 = _sub2;
+}
+Term* BinaryTerm::GetSub1()
+{
+	return sub1;
+}
+void BinaryTerm::SetSub1(Term* newSub1)
+{
+	sub1 = newSub1;
+}
+Term* BinaryTerm::GetSub2()
+{
+	return sub2;
+}
+void BinaryTerm::SetSub2(Term* newSub2)
+{
+	sub2 = newSub2;
 }
 int BinaryTerm::Tree(StringTree& tree, int& maxDepth)
 {
@@ -61,6 +99,11 @@ int BinaryTerm::Tree(StringTree& tree, int& maxDepth)
 
 
 // class MultiTerm
+MultiTerm::MultiTerm(Term* _parent) : Term(_parent)
+{
+
+}
+
 int MultiTerm::Tree(StringTree& tree, int& maxDepth)
 {
 	if (subTerms->size() > 0)

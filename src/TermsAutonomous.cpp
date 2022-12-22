@@ -5,7 +5,7 @@ using namespace std;
 
 // class Empty
 
-Empty::Empty()
+Empty::Empty(Term* _parent) : Term(_parent)
 {
 	treeLabel = "0";
 }
@@ -19,9 +19,11 @@ string Empty::Tex()
 }
 
 // class Cursor
-Cursor::Cursor()
+Cursor::Cursor(Term* _parent) : Term(_parent)
 {
 	treeLabel = "|";
+	left = nullptr;
+	right = nullptr;
 }
 string Cursor::Print()
 {
@@ -29,25 +31,52 @@ string Cursor::Print()
 }
 string Cursor::Tex()
 {
-	return "|";
+	return "\\vspace{-0.5pt}\\mid";
+}
+Cursor* Cursor::GetActive()
+{
+	return activeCursor;
+}
+void Cursor::SetActive(Cursor* newActive)
+{
+	activeCursor = newActive;
+}
+Term* Cursor::GetLeft()
+{
+	return left;
+}
+void Cursor::SetLeft(Term* newLeft)
+{
+	left = newLeft;
+}
+Term* Cursor::GetRight()
+{
+	return right;
+}
+void Cursor::SetRight(Term* newRight)
+{
+	right = newRight;
 }
 
 
 // class Number
-Number::Number(string s)
+Number::Number(Term* _parent, string s) : Term(_parent)
 {
 	treeLabel = "num";
 	numString = s;
-	try
-	{
-		value = stod(numString);
-	}
-	catch (...)
-	{
-		cerr << "[Error] could not parse '" << numString << "' to a number." << endl;
-		value = 0;
-	}
 }
+// This will be usefull later
+/*
+try
+{
+	value = stod(numString);
+}
+catch (...)
+{
+	cerr << "[Error] could not parse '" << numString << "' to a number." << endl;
+	value = 0;
+}
+*/
 string Number::Print()
 {
 	return numString;
@@ -56,10 +85,14 @@ string Number::Tex()
 {
 	return numString;
 }
+void Number::AppendDigit(int digit)
+{
+	numString += to_string(digit);
+}
 
 
 // class Text
-Text::Text(string _text)
+Text::Text(Term* _parent, string _text) : Term(_parent)
 {
 	treeLabel = "txt";
 	text = _text;
@@ -75,7 +108,7 @@ string Text::Tex()
 
 
 // class Variable
-Variable::Variable(string _name)
+Variable::Variable(Term* _parent, string _name) : Term(_parent)
 {
 	treeLabel = "var";
 	name = _name;
