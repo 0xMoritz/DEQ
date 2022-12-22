@@ -14,6 +14,12 @@ const int KEYS_UPPER_CASE_LETTERS_START = 65;
 const int KEYS_UPPER_CASE_LETTERS_END = 90;
 const int KEY_NUMBER_START = 48;
 const int KEY_NUMBER_END = 57;
+const int KEY_PLUS = 43;
+const int KEY_MINUS = 45;
+const int KEY_ASTERISK = 42;
+const int KEY_SLASH = 47;
+const int KEY_DECIMAL = 46;
+const int KEY_KOMMA = 44;
 
 using namespace std;
 
@@ -22,57 +28,79 @@ string FilePrinter::outputPath{"latex/"};
 
 int PressUpArrow(Term* t)
 {
-	cout << "PressUpArrow" << endl;
+	throw (string)"No Action set for 'up arrow'";
 	return 0;
 }
 int PressDownArrow(Term* t)
 {
-	cout << "PressDownArrow" << endl;
+	throw (string)"No Action set for 'down arrow'";
 	return 0;
 }
 int PressRightArrow(Term* t)
 {
-	cout << "PressRightArrow" << endl;
+	throw (string)"No Action set for 'right arrow'";
 	return 0;
 }
 int PressLeftArrow(Term* t)
 {
-	cout << "PressLeftArrow" << endl;
-	return 0;
-}
-int PressEscape(Term* t)
-{
-	cout << "PressEscape" << endl;
+	throw (string)"No Action set for 'left arrow'";
 	return 0;
 }
 int PressNumber(Term* t, int num)
 {
-	cout << "PressNumber " << num << endl;
+	throw (string)"No Action set for '" + to_string(num) + "'";
 	return 0;
 }
 int PressLetter(Term* t, char ch)
 {
-	cout << "PressLetter " << ch << endl;
+	throw (string)"No Action set for '" + ch + "'";
 	return 0;
 }
 int PressEnter(Term* t)
 {
-	cout << "PressEnter" << endl;
+	throw (string)"No Action set for 'Enter'";
 	return 0;
 }
-Enter
-int Input(Term* t) // return 3 to exit InteractiveInput, -1 to exit program, 1 if input is not readable, 0 otherwise
+int PressPlus(Term* t)
 {
-	char key;
+	throw (string)"No Action set for '+'";
+	return 0;
+}
+int PressMinus(Term* t)
+{
+	throw (string)"No Action set for '-'";
+	return 0;
+}
+int PressKomma(Term* t)
+{
+	throw (string)"No Action set for ','";
+	return 0;
+}
+int PressDecimal(Term* t)
+{
+	throw (string)"No Action set for '.'";
+	return 0;
+}
+int PressAsterisk(Term* t)
+{
+	throw (string)"No Action set for '*'";
+	return 0;
+}
+int PressSlash(Term* t)
+{
+	throw (string)"No Action set for '/'";
+	return 0;
+}
+
+int Input(Term* t, char& key) // return 3 to exit InteractiveInput, -1 to exit program, 1 if input is not readable, 0 otherwise
+{
 	if (read(STDIN_FILENO, &key, 1) != 1)
 	{
-		cerr << stderr << " read error or EOF\n";
-		return 1;
+		throw (string)("Read Error or EOF");
 	}
 	if (key == KEY_EOF)
 	{
-		cerr << stderr << " " << key << " (control-D or EOF)\n";
-		return -1;
+		throw (string)("Control-D or EOF");
 	}
 
 	// check for ESC seq
@@ -106,24 +134,20 @@ int Input(Term* t) // return 3 to exit InteractiveInput, -1 to exit program, 1 i
 				}
 				else
 				{
-					cerr << "[Error] Noticed Escape sequence but could not decipher " << key << endl;
-					return 1;
+					throw ((string)"Noticed Escape sequence but could not decipher " + static_cast<char>(key));
 				}
 			}
 			else
 			{
-				cerr << "[Error] Noticed Escape sequence but could not decipher " << key << endl;
-				return 1;
+				throw ((string)"Noticed Escape sequence but could not decipher " + key);
 			}
 		}
 		else if (selret == -1)
 		{
-			cerr << "[Error] " << errno << endl;
-			return 1;
+			throw ((string)"Damn, How did you do it? I didn't imagine this error could ever be thrown so I didn't bother giving it a name");
 		}
 		else
 		{
-			PressEscape(t);
 			return 3;
 		}
 	}
@@ -142,7 +166,34 @@ int Input(Term* t) // return 3 to exit InteractiveInput, -1 to exit program, 1 i
 		{
 			return PressLetter(t, (char)key);
 		}
-		cerr << "[Error] Illegal input: " << (int)key << endl;
+		else if (key == KEY_PLUS)
+		{
+			return PressPlus(t);
+		}
+		else if (key == KEY_MINUS)
+		{
+			return PressMinus(t);
+		}
+		else if (key == KEY_KOMMA)
+		{
+			return PressKomma(t);
+		}
+		else if (key == KEY_DECIMAL)
+		{
+			return PressDecimal(t);
+		}
+		else if (key == KEY_ASTERISK)
+		{
+			return PressAsterisk(t);
+		}
+		else if (key == KEY_SLASH)
+		{
+			return PressSlash(t);
+		}
+		else
+		{
+			throw ((string)"Illegal input: " + to_string(static_cast<int>(key)));
+		}
 	}
 	return key;
 }
@@ -204,27 +255,42 @@ int InteractiveInput(Term* t)
 
 	int res = 0;
 	int depth = 0;
+	char key;
 	while (1)
 	{
-		int in = Input(t);
-		if (in == 3)
+		try
 		{
-			res = 0;
-			break;
+			int stat = Input(t, key);
+			if (stat == 3)
+			{
+				res = 0;
+				break;
+			}
+			else if (stat == -1)
+			{
+				res = -1;
+				break;
+			}
+			// Overwrite last tree
+			else if (stat == 0)
+			{
+				for (int i = 0; i < depth+3; i++)
+				{
+					cout << "\033[A" << "\33[2K"; // Delete and move up
+				}
+				cout << "\b"; // Bring back cursor with \b
+
+				// Print status
+				PrintTermToConsole(t);
+				depth = PrintTreeToConsole(t);
+				//cout << (int)key << endl;
+			}
 		}
-		else if (in == -1)
+		catch (string err)
 		{
-			res = -1;
-			break;
+			cerr << "[Error] " << err << endl;
+			//return 1;
 		}
-		// Overwrite last tree
-		for (int i = 0; i < depth+3; i++)
-		{
-			cout << "\033[A" << "\33[2K"; // Delete and move up
-		}
-		cout << "\b"; // Bring back cursor
-		PrintTermToConsole(t);
-		depth = PrintTreeToConsole(t);
 	}
 
 	// set terminal back to canonical
@@ -246,9 +312,8 @@ void ShellLoop()
 		{
 			cout << "Entering Interactive input" << endl << endl;
 			int out = InteractiveInput(t);
-			if (out == -1)
-			break;
-			cout << endl << "Interactive Input exited with " << out << endl;
+			if (out != 0)
+				break;
 		}
 		else if (in == "l" || in == "Latex")
 		{
