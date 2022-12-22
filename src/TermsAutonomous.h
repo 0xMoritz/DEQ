@@ -46,10 +46,13 @@ private:
 	double value;
 	std::string numString;
 public:
-	Number(Term* _parent, std::string s);
+	Number(Term* _parent);
 	std::string Print() override;
 	std::string Tex() override;
 	void AppendDigit(int digit);
+	void BackspaceDigit(); // Deletion from right
+	void DeleteDigit(); // Deletion from left
+	bool IsEmpty();
 };
 
 class Text : public Term

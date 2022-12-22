@@ -60,10 +60,10 @@ void Cursor::SetRight(Term* newRight)
 
 
 // class Number
-Number::Number(Term* _parent, string s) : Term(_parent)
+Number::Number(Term* _parent) : Term(_parent)
 {
 	treeLabel = "num";
-	numString = s;
+	numString = "";
 }
 // This will be usefull later
 /*
@@ -88,6 +88,22 @@ string Number::Tex()
 void Number::AppendDigit(int digit)
 {
 	numString += to_string(digit);
+}
+void Number::BackspaceDigit()
+{
+	assert(numString.length() > 0);
+	numString = numString.substr(0, numString.length()-1);
+}
+void Number::DeleteDigit()
+{
+	assert(numString.length() > 0);
+	numString = numString.substr(1, numString.length()-1);
+}
+bool Number::IsEmpty()
+{
+	if (numString.length() == 0)
+		return 1;
+	return 0;
 }
 
 

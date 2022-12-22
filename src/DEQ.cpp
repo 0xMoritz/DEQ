@@ -4,6 +4,8 @@ const int CONSOLE_WIDTH = 93;
 
 const int KEY_ENTER = 10;
 const int KEY_ESCAPE = 27;
+const int KEY_BACKSPACE = 127;
+const int KEY_DELETE = 126;
 const int KEY_UP = 65;
 const int KEY_DOWN = 66;
 const int KEY_RIGHT = 67;
@@ -35,27 +37,56 @@ void InsertDigit(Term*& t, int digit)
 {
 	Cursor* c = Cursor::GetActive();
 	assert(c != nullptr);
-	if (c->GetLeft() != nullptr)
+	// Create the necessary object
+	if (c->GetLeft() == nullptr)
 	{
-		if (typeid(*c->GetLeft()) == typeid(Number))
+		// Always create the parent first
+		Connect2* newParent = new Connect2(c->GetParent());
+		if (c->GetParent() == nullptr)// Create new parent element, if the cursors parent is nullptr, than this will simply be handed over, however than we'll have to change the base Term element t
 		{
-			dynamic_cast<Number*>(c->GetLeft())->AppendDigit(digit);
-			return;
+			assert(t==c);
+			t = static_cast<Term*>(newParent);
 		}
+		Number* newNumber = new Number(newParent);
+		newParent->SetSub1(newNumber);
+		c->SetParent(newParent);
+		c->SetLeft(newNumber);
+		newParent->SetSub2(c);
+	}
+	// Add the actual digit
+	if (typeid(*c->GetLeft()) == typeid(Number))
+	{
+		dynamic_cast<Number*>(c->GetLeft())->AppendDigit(digit);
+	}
+	else
+	{
+		throw (string)"Could not add digit";
 	}
 
-	// Always create the parent first
-	Connect2* newParent = new Connect2(c->GetParent());
-	if (c->GetParent() == nullptr)// Create new parent element, if the cursors parent is nullptr, than this will simply be handed over, however than we'll have to change the base Term element t
+}
+// TODO: Change from number to raw format, which can be parsed into var, num, fct,...
+void Backspace(Term*& t)
+{
+	Cursor* c = Cursor::GetActive();
+	if (c->GetLeft() == nullptr)
+		return;
+	if (typeid(*c->GetLeft()) == typeid(Number))
 	{
-		assert(t==c);
-		t = static_cast<Term*>(newParent);
+		Number* num = dynamic_cast<Number*>(c->GetLeft());
+		num->BackspaceDigit();
+		// if number becomes "empty"
+		if (num->IsEmpty())
+		{
+			//TODO: implement a replace method.
+			assert(typeid(*c->GetParent()) == typeid(Connect2));
+			///TODO, attention with the hirarchy...
+		}
 	}
-	Number* newNumber = new Number(newParent, string(1, static_cast<char>(digit)));
-	newParent->SetSub1(newNumber);
-	c->SetParent(newParent);
-	c->SetLeft(newNumber);
-	newParent->SetSub2(c);
+}
+
+void Delete(Term*& t)
+{
+	throw (string)"Delete has not yet been implemented";
 }
 
 
@@ -112,6 +143,16 @@ int PressLetter(Term*& t, char ch)
 int PressEnter(Term*& t)
 {
 	PrintLatexToConsole(t);
+	return 2;
+}
+int PressBackspace(Term*& t)
+{
+	Backspace(t);
+	return 0;
+}
+int PressDelete(Term*& t)
+{
+	Delete(t);
 	return 2;
 }
 int PressPlus(Term*& t)
@@ -209,6 +250,14 @@ int Input(Term*& t, char& key) // return 3 to exit InteractiveInput, -1 to exit 
 		if (key == KEY_ENTER)
 		{
 			return PressEnter(t);
+		}
+		else if (key == KEY_BACKSPACE)
+		{
+			return PressBackspace(t);
+		}
+		else if (key == KEY_DELETE)
+		{
+			return PressDelete(t);
 		}
 		else if (KEY_NUMBER_START <= key && key <= KEY_NUMBER_END)
 		{
