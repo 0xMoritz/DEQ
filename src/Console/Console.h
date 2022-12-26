@@ -8,13 +8,13 @@
 
 #pragma once
 
-#include "../IO.h"
+#include "../Manipulator.h"
 
 
 class Console
 {
 private:
-	IO& io;
+	Manipulator& manip;
 
 	const unsigned int CONSOLE_WIDTH = 93; // Change to your liking
 	const int KEY_ENTER = 10;
@@ -43,27 +43,27 @@ private:
 	void PrintTermToConsole(Term*& t);
 	void PrintLatexToConsole(Term*& t);
 	int PrintTreeToConsole(Term*& t); // return maxDepth
-	int Input(Term*& t, char& key); // return 3 to exit InteractiveInput, -1 to exit program, 1 if input is not readable, 0 otherwise
+	int Input(char& key); // return 3 to exit InteractiveInput, -1 to exit program, 1 if input is not readable, 0 otherwise
 	int Latex(Term*& t);
-	int InteractiveInput(Term*& t);
+	int InteractiveInput();
 	// Keys:
-	int PressUpArrow(Term*& t);
-	int PressDownArrow(Term*& t);
-	int PressRightArrow(Term*& t);
-	int PressLeftArrow(Term*& t);
-	int PressNumber(Term*& t, int digit);
-	int PressLetter(Term*& t, char ch);
-	int PressEnter(Term*& t);
-	int PressBackspace(Term*& t);
-	int PressDelete(Term*& t);
-	int PressPlus(Term*& t);
-	int PressMinus(Term*& t);
-	int PressKomma(Term*& t);
-	int PressDecimal(Term*& t);
-	int PressAsterisk(Term*& t);
-	int PressSlash(Term*& t);
+	int PressUpArrow();
+	int PressDownArrow();
+	int PressRightArrow();
+	int PressLeftArrow();
+	int PressNumber(int digit);
+	int PressLetter(char ch);
+	int PressEnter();
+	int PressBackspace();
+	int PressDelete();
+	int PressPlus();
+	int PressMinus();
+	int PressKomma();
+	int PressDecimal();
+	int PressAsterisk();
+	int PressSlash();
 public:
 	//Console(IO& _io);
-	Console(IO& _io);
+	Console(Manipulator& _manip);
 	void ShellLoop();
 };

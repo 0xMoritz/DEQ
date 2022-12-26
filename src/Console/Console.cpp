@@ -3,7 +3,7 @@
 
 using namespace std;
 
-Console::Console(IO& _io) : io(_io)
+Console::Console(Manipulator& _manip) : manip(_manip)
 {
 
 }
@@ -26,7 +26,7 @@ int Console::PrintTreeToConsole(Term*& t) // return maxDepth
 }
 
 
-int Console::Input(Term*& t, char& key) // return 3 to exit InteractiveInput, -1 to exit program, 1 if input is not readable, 0 otherwise
+int Console::Input(char& key) // return 3 to exit InteractiveInput, -1 to exit program, 1 if input is not readable, 0 otherwise
 {
 	if (read(STDIN_FILENO, &key, 1) != 1)
 	{
@@ -56,13 +56,13 @@ int Console::Input(Term*& t, char& key) // return 3 to exit InteractiveInput, -1
 				if (read(STDIN_FILENO, &key, 1) == 1)
 				{
 					if (key == KEY_UP)
-						PressUpArrow(t);
+						PressUpArrow();
 					else if (key == KEY_RIGHT)
-						PressRightArrow(t);
+						PressRightArrow();
 					else if (key == KEY_LEFT)
-						PressLeftArrow(t);
+						PressLeftArrow();
 					else if (key == KEY_DOWN)
-						PressDownArrow(t);
+						PressDownArrow();
 					else
 						return 1;
 				}
@@ -89,48 +89,48 @@ int Console::Input(Term*& t, char& key) // return 3 to exit InteractiveInput, -1
 	{
 		if (key == KEY_ENTER)
 		{
-			return PressEnter(t);
+			return PressEnter();
 		}
 		else if (key == KEY_BACKSPACE)
 		{
-			return PressBackspace(t);
+			return PressBackspace();
 		}
 		else if (key == KEY_DELETE)
 		{
-			return PressDelete(t);
+			return PressDelete();
 		}
 		else if (KEY_NUMBER_START <= key && key <= KEY_NUMBER_END)
 		{
-			return PressNumber(t, key-KEY_NUMBER_START);
+			return PressNumber(key-KEY_NUMBER_START);
 		}
 		else if ((KEYS_LOWER_CASE_LETTERS_START <= key && key <= KEYS_LOWER_CASE_LETTERS_END)
 			|| (KEYS_UPPER_CASE_LETTERS_START <= key && key <= KEYS_UPPER_CASE_LETTERS_END)) // Uppercase or Lowercase letter
 		{
-			return PressLetter(t, (char)key);
+			return PressLetter((char)key);
 		}
 		else if (key == KEY_PLUS)
 		{
-			return PressPlus(t);
+			return PressPlus();
 		}
 		else if (key == KEY_MINUS)
 		{
-			return PressMinus(t);
+			return PressMinus();
 		}
 		else if (key == KEY_KOMMA)
 		{
-			return PressKomma(t);
+			return PressKomma();
 		}
 		else if (key == KEY_DECIMAL)
 		{
-			return PressDecimal(t);
+			return PressDecimal();
 		}
 		else if (key == KEY_ASTERISK)
 		{
-			return PressAsterisk(t);
+			return PressAsterisk();
 		}
 		else if (key == KEY_SLASH)
 		{
-			return PressSlash(t);
+			return PressSlash();
 		}
 		else
 		{
@@ -180,7 +180,7 @@ int Console::Latex(Term*& t)
 }
 
 // Interactive equation with instant feedback
-int Console::InteractiveInput(Term*& t)
+int Console::InteractiveInput()
 {
 	// put terminal into non-canonical mode
 	struct termios oldTermios;
@@ -198,7 +198,7 @@ int Console::InteractiveInput(Term*& t)
 	{
 		try
 		{
-			int stat = Input(t, key);
+			int stat = Input(key);
 			if (stat == 3)
 			{
 				res = 0;
@@ -223,14 +223,14 @@ int Console::InteractiveInput(Term*& t)
 				cout << "\b"; // Bring back cursor with \b
 
 				// Print status
-				PrintTermToConsole(t);
-				depth = PrintTreeToConsole(t);
+				PrintTermToConsole(manip.GetRoot());
+				depth = PrintTreeToConsole(manip.GetRoot());
 				//cout << (int)key << endl;
 
 				// Debug Line
-				if (io.debugText.length() > CONSOLE_WIDTH)
-					io.debugText = io.debugText.substr(io.debugText.length() - CONSOLE_WIDTH, CONSOLE_WIDTH); // Restrict length to prevent overflow
-				cout << string(CONSOLE_WIDTH - io.debugText.length(), ' ') << io.debugText << endl;
+				if (manip.debugText.length() > CONSOLE_WIDTH)
+					manip.debugText = manip.debugText.substr(manip.debugText.length() - CONSOLE_WIDTH, CONSOLE_WIDTH); // Restrict length to prevent overflow
+				cout << string(CONSOLE_WIDTH - manip.debugText.length(), ' ') << manip.debugText << endl;
 				//cout << "\b";
 			}
 		}
@@ -249,8 +249,7 @@ int Console::InteractiveInput(Term*& t)
 // Standard Loop for manipulation
 void Console::ShellLoop()
 {
-	Term* t = new Cursor(nullptr);
-	Cursor::SetActive(dynamic_cast<Cursor*>(t));
+	Term*& root = manip.GetRoot();
 
 	while (1)
 	{
@@ -260,17 +259,17 @@ void Console::ShellLoop()
 		if (in == "i" || in == "Interactive")
 		{
 			cout << "Entering Interactive input" << endl << endl;
-			int out = InteractiveInput(t);
+			int out = InteractiveInput();
 			if (out != 0)
 				break;
 		}
 		else if (in == "l" || in == "Latex")
 		{
-			Latex(t);
+			Latex(root);
 		}
 		else if (in == "t" || in == "Tree")
 		{
-			PrintTreeToConsole(t);
+			PrintTreeToConsole(root);
 		}
 		else if (in == "x" || in == "q" || in == "Quit" || in == "Exit")
 		{
@@ -278,83 +277,83 @@ void Console::ShellLoop()
 		}
 		else if (in == "p" || in == "Print")
 		{
-			cout << t->Print() << endl;
+			cout << root->Print() << endl;
 		}
 	}
 }
 
 // Keys
-int Console::PressUpArrow(Term*& t)
+int Console::PressUpArrow()
 {
 	throw (string)"No Action set for 'up arrow'";
 	return 0;
 }
-int Console::PressDownArrow(Term*& t)
+int Console::PressDownArrow()
 {
 	throw (string)"No Action set for 'down arrow'";
 	return 0;
 }
-int Console::PressRightArrow(Term*& t)
+int Console::PressRightArrow()
 {
-	throw (string)"No Action set for 'right arrow'";
+	manip.CursorMoveRight();
 	return 0;
 }
-int Console::PressLeftArrow(Term*& t)
+int Console::PressLeftArrow()
 {
-	throw (string)"No Action set for 'left arrow'";
+	manip.CursorMoveLeft();
 	return 0;
 }
-int Console::PressNumber(Term*& t, int digit)
+int Console::PressNumber(int digit)
 {
-	io.InsertDigit(t, digit);
+	manip.InsertDigit(digit);
 	return 0;
 }
-int Console::PressLetter(Term*& t, char ch)
+int Console::PressLetter(char ch)
 {
 	throw (string)"No Action set for '" + ch + "'";
 	return 0;
 }
-int Console::PressEnter(Term*& t)
+int Console::PressEnter()
 {
-	PrintLatexToConsole(t);
+	PrintLatexToConsole(manip.GetRoot());
 	return 2;
 }
-int Console::PressBackspace(Term*& t)
+int Console::PressBackspace()
 {
-	io.Backspace(t);
+	manip.Backspace();
 	return 0;
 }
-int Console::PressDelete(Term*& t)
+int Console::PressDelete()
 {
-	io.Delete(t);
+	manip.Delete();
 	return 2;
 }
-int Console::PressPlus(Term*& t)
+int Console::PressPlus()
 {
 	throw (string)"No Action set for '+'";
 	return 0;
 }
-int Console::PressMinus(Term*& t)
+int Console::PressMinus()
 {
 	throw (string)"No Action set for '-'";
 	return 0;
 }
-int Console::PressKomma(Term*& t)
+int Console::PressKomma()
 {
 	throw (string)"No Action set for ','";
 	return 0;
 }
-int Console::PressDecimal(Term*& t)
+int Console::PressDecimal()
 {
 	throw (string)"No Action set for '.'";
 	return 0;
 }
-int Console::PressAsterisk(Term*& t)
+int Console::PressAsterisk()
 {
 	throw (string)"No Action set for '*'";
 	return 0;
 }
-int Console::PressSlash(Term*& t)
+int Console::PressSlash()
 {
 	throw (string)"No Action set for '/'";
 	return 0;

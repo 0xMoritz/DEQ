@@ -11,8 +11,8 @@ Cursor* Cursor::activeCursor = nullptr;
 
 int main(int argc, char **argv)
 {
-	IO io;
-	Console console(io);
+	Manipulator manip;
+	Console console(manip);
 	console.ShellLoop();
 	cout << "Exit." << endl;
 	return 0;

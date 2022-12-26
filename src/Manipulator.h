@@ -21,14 +21,19 @@
 #include "TermsMultiple/Multiplication.h"
 #include "Utility/FilePrinter.h"
 
-class IO
+class Manipulator
 {
 private:
+	Term* root;
 public:
 	std::string debugText = "";
-	IO();
-	void InsertDigit(Term*& t, int digit);
-	void Backspace(Term*& t);
-	void Delete(Term*& t);
+	Manipulator();
+	void SetRoot(Term*& _root);
+	Term*& GetRoot();
+	void InsertDigit(int digit);
+	void Backspace();
+	void Delete();
+	void CursorMoveRight();
+	void CursorMoveLeft();
 	int Latex(Term*& t);
 };

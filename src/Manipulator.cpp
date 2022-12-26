@@ -1,14 +1,24 @@
-#include "IO.h"
+#include "Manipulator.h"
 
 using namespace std;
 
 
-IO::IO()
+Manipulator::Manipulator()
 {
-
+	root = new Cursor(nullptr);
+	Cursor::SetActive(dynamic_cast<Cursor*>(root));
 }
 
-void IO::InsertDigit(Term*& t, int digit)
+void Manipulator::SetRoot(Term*& _root)
+{
+	root = _root;
+}
+Term*& Manipulator::GetRoot()
+{
+	return root;
+}
+
+void Manipulator::InsertDigit(int digit)
 {
 	Cursor* c = Cursor::GetActive();
 	assert(c != nullptr);
@@ -19,8 +29,8 @@ void IO::InsertDigit(Term*& t, int digit)
 		Connect2* newParent = new Connect2(c->GetParent());
 		if (c->GetParent() == nullptr)// Create new parent element, if the cursors parent is nullptr, than this will simply be handed over, however than we'll have to change the base Term element t
 		{
-			assert(t==c);
-			t = static_cast<Term*>(newParent);
+			assert(root==c);
+			root = static_cast<Term*>(newParent);
 		}
 		Raw* newRaw = new Raw(newParent);
 		newParent->SetSub1(newRaw);
@@ -39,7 +49,43 @@ void IO::InsertDigit(Term*& t, int digit)
 	}
 
 }
-void IO::Backspace(Term*& t)
+void Manipulator::Backspace()
+{
+	Cursor* c = Cursor::GetActive();
+	if (c->GetLeft() == nullptr)
+		return;
+	if (typeid(*c->GetLeft()) == typeid(Raw))
+	{
+		Raw* raw = dynamic_cast<Raw*>(c->GetLeft());
+		raw->Backspace();
+		// if raw becomes "empty"
+		if (raw->IsEmpty())
+		{
+			//TODO: implement a replace method.
+			assert(typeid(*c->GetParent()) == typeid(Connect2));
+			///TODO, attention with the hirarchy...
+		}
+	}
+}
+void Manipulator::CursorMoveLeft()
+{
+	Cursor* c = Cursor::GetActive();
+	if (c->GetLeft() == nullptr)
+		return;
+	if (typeid(*c->GetLeft()) == typeid(Raw))
+	{
+		Raw* raw = dynamic_cast<Raw*>(c->GetLeft());
+		raw->Backspace();
+		// if raw becomes "empty"
+		if (raw->IsEmpty())
+		{
+			//TODO: implement a replace method.
+			assert(typeid(*c->GetParent()) == typeid(Connect2));
+			///TODO, attention with the hirarchy...
+		}
+	}
+}
+void Manipulator::CursorMoveRight()
 {
 	Cursor* c = Cursor::GetActive();
 	if (c->GetLeft() == nullptr)
@@ -58,14 +104,14 @@ void IO::Backspace(Term*& t)
 	}
 }
 
-void IO::Delete(Term*& t)
+void Manipulator::Delete()
 {
 	throw (string)"Delete has not yet been implemented";
 }
 
 
 // Print Latex Equation
-int IO::Latex(Term*& t)
+int Manipulator::Latex(Term*& t)
 {
 	string eq = t->Tex();
 	// Write only the equation for GUI
