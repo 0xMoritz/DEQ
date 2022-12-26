@@ -304,18 +304,28 @@ int Input(Term*& t, char& key) // return 3 to exit InteractiveInput, -1 to exit 
 // Print Latex Equation
 int Latex(Term*& t)
 {
-	// Write to file
+	string eq = t->Tex();
+	// Write only the equation for GUI
+	{
+		string filename = "eq";
+		FilePrinter printer(filename);
+		printer.Write(eq);
+		printer.CloseFile();
+	}
+
+	// Write to standalone latex file and execute pdfLatex
 	string compilePdfLatex =
 	"\\documentclass{standalone}\n"
 	"\\begin{document}\n"
 		"\t$\\displaystyle\n\t"
-		+ (string)t->Tex() +
+		+ eq +
 		"\n\t$\n"
 	"\\end{document}\n";
 	string filename = "eq.tex";
 	FilePrinter printer(filename);
 	printer.Write(compilePdfLatex);
 	printer.CloseFile();
+
 	// generate pdf
 	string pdfLatexCommand = "cd " + printer.GetOutputPath() + " && pdflatex " + filename;
 	cout << pdfLatexCommand << endl << endl;

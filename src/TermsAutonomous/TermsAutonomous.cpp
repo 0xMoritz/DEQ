@@ -31,7 +31,9 @@ string Cursor::Print()
 }
 string Cursor::Tex()
 {
-	return "\\vspace{-0.5pt}\\mid";
+	//return "\\hspace{-1.5pt}{\\scriptstyle \\vert}";// TODO: Fine tune hspace  before and after
+	return "\\hspace{-1pt}\\raisebox{1.5pt}{{$\\scriptstyle |$}}\\hspace{-1pt}";
+	//return "\\hspace{-1.5pt}{\\scalebox{0.6}{\\mbox{\\ensuremath{\\displaystyle |}}}";
 }
 Cursor* Cursor::GetActive()
 {

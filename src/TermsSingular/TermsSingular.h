@@ -8,7 +8,7 @@
 
 #pragma once
 
-#include "Term.h"
+#include "../Term/SingularTerm.h"
 
 
 class Brackets : SingularTerm

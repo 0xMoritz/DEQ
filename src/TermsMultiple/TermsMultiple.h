@@ -8,8 +8,8 @@
 
 #pragma once
 
-#include "Term.h"
-#include "TermsAutonomous.h"
+#include "../Term/MultiTerm.h"
+#include "../TermsAutonomous/TermsAutonomous.h"
 
 
 class Addition : public MultiTerm

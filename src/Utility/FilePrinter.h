@@ -9,7 +9,7 @@
 
 #pragma once
 
-#include "global.h"
+#include "../Global.h"
 
 
 /*! \brief Object for writing content to a file.

@@ -8,7 +8,7 @@
 
 #pragma once
 
-#include "Term.h"
+#include "../Term/AutonomousTerm.h"
 
 
 class Empty : public Term

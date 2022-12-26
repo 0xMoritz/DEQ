@@ -8,8 +8,8 @@
 
 #pragma once
 
-#include "TermsAutonomous.h"
-#include "TermsSingular.h"
-#include "TermsBinary.h"
-#include "TermsMultiple.h"
-#include "FilePrinter.h"
+#include "TermsAutonomous/TermsAutonomous.h"
+#include "TermsSingular/TermsSingular.h"
+#include "TermsBinary/TermsBinary.h"
+#include "TermsMultiple/TermsMultiple.h"
+#include "Utility/FilePrinter.h"

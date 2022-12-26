@@ -8,7 +8,7 @@
 
 #pragma once
 
-#include "Term.h"
+#include "../Term/BinaryTerm.h"
 
 
 class Connect2 : public BinaryTerm
