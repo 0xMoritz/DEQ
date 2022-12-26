@@ -2,4 +2,6 @@ DEQ.bin
 Makefile_old
 latex/*
 obj/*
-GUI/*
+GUI/label.html
+GUI/build-DEQ-PC_Desktop-Debug/*
+GUI/DEQ/DEQ.pro.user

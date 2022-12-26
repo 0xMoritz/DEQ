@@ -1,6 +1,6 @@
 /*!
- * @file Term.h
- * @brief Basis Class and Derived Classes of Graphalgorithm approach to Mathematical Fomulae
+ * @file AutonomousTerm.h
+ * @brief Subclass of Term without subTerms
  *
  *  Created on: Dec 19, 2022
  *      Author: Moritz Geßner
