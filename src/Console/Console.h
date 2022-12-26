@@ -18,6 +18,7 @@ private:
 
 	const unsigned int CONSOLE_WIDTH = 93; // Change to your liking
 	const int KEY_ENTER = 10;
+	const int KEY_TAB = 9;
 	const int KEY_ESCAPE = 27; // Will be called for arrow keys etc
 	const int KEY_BACKSPACE = 127;
 	const int KEY_DELETE = 126;
@@ -25,7 +26,9 @@ private:
 	const int KEY_DOWN = 66;
 	const int KEY_RIGHT = 67;
 	const int KEY_LEFT = 68;
-	const int KEY_MOVELEFT = 91;
+	const int KEY_ESCAPE2 = 91; // This seems to be called to move the cursor once to the left in escape sequences
+	const int KEY_POS1 = 72;
+	const int KEY_END = 70;
 	const int KEY_EOF = 4;
 	const int KEYS_LOWER_CASE_LETTERS_START = 97;
 	const int KEYS_LOWER_CASE_LETTERS_END = 122;
@@ -39,6 +42,7 @@ private:
 	const int KEY_SLASH = 47;
 	const int KEY_DECIMAL = 46;
 	const int KEY_KOMMA = 44;
+	const int KEY_HAT = 94;
 
 	void PrintTermToConsole(Term*& t);
 	void PrintLatexToConsole(Term*& t);
@@ -51,9 +55,12 @@ private:
 	int PressDownArrow();
 	int PressRightArrow();
 	int PressLeftArrow();
+	int PressPos1();
+	int PressEnd();
 	int PressNumber(int digit);
 	int PressLetter(char ch);
 	int PressEnter();
+	int PressTab();
 	int PressBackspace();
 	int PressDelete();
 	int PressPlus();
@@ -62,6 +69,7 @@ private:
 	int PressDecimal();
 	int PressAsterisk();
 	int PressSlash();
+	int PressHat();
 public:
 	//Console(IO& _io);
 	Console(Manipulator& _manip);

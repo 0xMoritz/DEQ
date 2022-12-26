@@ -73,34 +73,34 @@ void Manipulator::CursorMoveLeft()
 	if (c->GetLeft() == nullptr)
 		return;
 	if (typeid(*c->GetLeft()) == typeid(Raw))
-	{
+	{/*
 		Raw* raw = dynamic_cast<Raw*>(c->GetLeft());
-		raw->Backspace();
+		string swap = raw->Backspace();
 		// if raw becomes "empty"
 		if (raw->IsEmpty())
 		{
 			//TODO: implement a replace method.
 			assert(typeid(*c->GetParent()) == typeid(Connect2));
 			///TODO, attention with the hirarchy...
-		}
+		}*/
 	}
 }
 void Manipulator::CursorMoveRight()
 {
 	Cursor* c = Cursor::GetActive();
-	if (c->GetLeft() == nullptr)
+	if (c->GetRight() == nullptr)
 		return;
-	if (typeid(*c->GetLeft()) == typeid(Raw))
-	{
+	if (typeid(*c->GetRight()) == typeid(Raw))
+	{/*
 		Raw* raw = dynamic_cast<Raw*>(c->GetLeft());
-		raw->Backspace();
+		string swap = raw->Backspace();
 		// if raw becomes "empty"
 		if (raw->IsEmpty())
 		{
 			//TODO: implement a replace method.
 			assert(typeid(*c->GetParent()) == typeid(Connect2));
 			///TODO, attention with the hirarchy...
-		}
+		}*/
 	}
 }
 

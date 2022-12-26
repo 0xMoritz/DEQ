@@ -19,7 +19,7 @@ public:
 	std::string Print() override;
 	std::string Tex() override;
 	void Append(std::string s);
-	void Backspace(); // Deletion from right
-	void Delete(); // Deletion from left
+	std::string Backspace(); // Deletion from right, why not return char? Maybe I want to have certain more complicated structures like a subscript
+	std::string Delete(); // Deletion from left
 	bool IsEmpty();
 };

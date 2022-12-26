@@ -32,15 +32,19 @@ void Raw::Append(string s)
 {
 	text += s;
 }
-void Raw::Backspace()
+std::string Raw::Backspace()
 {
 	assert(text.length() > 0); // This case should be filtered by isEmpty checks
+	string deleted = text.substr(text.length()-1, 1);
 	text = text.substr(0, text.length()-1);
+	return deleted;
 }
-void Raw::Delete()
+std::string Raw::Delete()
 {
 	assert(text.length() > 0); // This case should be filtered by isEmpty checks
+	string deleted = text.substr(0, 1);
 	text = text.substr(1, text.length()-1);
+	return deleted;
 }
 bool Raw::IsEmpty()
 {
