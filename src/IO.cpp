@@ -5,7 +5,7 @@ using namespace std;
 
 IO::IO()
 {
-	
+
 }
 
 void IO::InsertDigit(Term*& t, int digit)
@@ -22,16 +22,16 @@ void IO::InsertDigit(Term*& t, int digit)
 			assert(t==c);
 			t = static_cast<Term*>(newParent);
 		}
-		Number* newNumber = new Number(newParent);
-		newParent->SetSub1(newNumber);
+		Raw* newRaw = new Raw(newParent);
+		newParent->SetSub1(newRaw);
 		c->SetParent(newParent);
-		c->SetLeft(newNumber);
+		c->SetLeft(newRaw);
 		newParent->SetSub2(c);
 	}
 	// Add the actual digit
-	if (typeid(*c->GetLeft()) == typeid(Number))
+	if (typeid(*c->GetLeft()) == typeid(Raw))
 	{
-		dynamic_cast<Number*>(c->GetLeft())->AppendDigit(digit);
+		dynamic_cast<Raw*>(c->GetLeft())->Append(to_string(digit));
 	}
 	else
 	{
@@ -39,18 +39,17 @@ void IO::InsertDigit(Term*& t, int digit)
 	}
 
 }
-// TODO: Change from number to raw format, which can be parsed into var, num, fct,...
 void IO::Backspace(Term*& t)
 {
 	Cursor* c = Cursor::GetActive();
 	if (c->GetLeft() == nullptr)
 		return;
-	if (typeid(*c->GetLeft()) == typeid(Number))
+	if (typeid(*c->GetLeft()) == typeid(Raw))
 	{
-		Number* num = dynamic_cast<Number*>(c->GetLeft());
-		num->BackspaceDigit();
-		// if number becomes "empty"
-		if (num->IsEmpty())
+		Raw* raw = dynamic_cast<Raw*>(c->GetLeft());
+		raw->Backspace();
+		// if raw becomes "empty"
+		if (raw->IsEmpty())
 		{
 			//TODO: implement a replace method.
 			assert(typeid(*c->GetParent()) == typeid(Connect2));

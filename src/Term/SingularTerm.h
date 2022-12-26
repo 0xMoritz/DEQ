@@ -2,7 +2,7 @@
  * @file SingularTerm.h
  * @brief Subclass of Term with one subTerm
  *
- *  Created on: Dec 19, 2022
+ *  Created on: Dec 26, 2022
  *      Author: Moritz Geßner
  */
 

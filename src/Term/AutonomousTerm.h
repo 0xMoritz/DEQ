@@ -2,7 +2,7 @@
  * @file AutonomousTerm.h
  * @brief Subclass of Term without subTerms
  *
- *  Created on: Dec 19, 2022
+ *  Created on: Dec 26, 2022
  *      Author: Moritz Geßner
  */
 

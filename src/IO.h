@@ -8,10 +8,17 @@
 
 #pragma once
 
-#include "TermsAutonomous/TermsAutonomous.h"
-#include "TermsSingular/TermsSingular.h"
-#include "TermsBinary/TermsBinary.h"
-#include "TermsMultiple/TermsMultiple.h"
+#include "TermsAutonomous/Cursor.h"
+#include "TermsAutonomous/Empty.h"
+#include "TermsAutonomous/Number.h"
+#include "TermsAutonomous/Raw.h"
+#include "TermsAutonomous/Variable.h"
+#include "TermsSingular/Bracket.h"
+#include "TermsBinary/Connect2.h"
+#include "TermsBinary/Power.h"
+#include "TermsBinary/Subscript.h"
+#include "TermsMultiple/Addition.h"
+#include "TermsMultiple/Multiplication.h"
 #include "Utility/FilePrinter.h"
 
 class IO
