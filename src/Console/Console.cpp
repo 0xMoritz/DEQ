@@ -130,45 +130,6 @@ int Console::Input(char& key) // return 3 to exit InteractiveInput, -1 to exit p
 	return key;
 }
 
-
-// Print Latex Equation
-int Console::Latex(Term*& t)
-{
-	string eq = t->Tex();
-	// Write only the equation for GUI
-	{
-		string filename = "eq";
-		FilePrinter printer(filename);
-		printer.Write(eq);
-		printer.CloseFile();
-	}
-
-	// Write to standalone latex file and execute pdfLatex
-	string compilePdfLatex =
-	"\\documentclass{standalone}\n"
-	"\\begin{document}\n"
-		"\t$\\displaystyle\n\t"
-		+ eq +
-		"\n\t$\n"
-	"\\end{document}\n";
-	string filename = "eq.tex";
-	FilePrinter printer(filename);
-	printer.Write(compilePdfLatex);
-	printer.CloseFile();
-
-	// generate pdf
-	string pdfLatexCommand = "cd " + printer.GetOutputPath() + " && pdflatex " + filename;
-	cout << pdfLatexCommand << endl << endl;
-	int pdfLatexOutput = system(pdfLatexCommand.c_str());
-	cout << system("\n") << endl;
-	cout << "pdfLatex returned " << pdfLatexOutput << endl << endl;
-
-	// Open pdf
-	string openPDFCommand = "okular --unique " + printer.GetOutputPath() + "/" + "eq.pdf &";
-	cout << "okular returned" << system(openPDFCommand.c_str()) << endl << endl;
-	return 0;
-}
-
 // Interactive equation with instant feedback
 int Console::InteractiveInput()
 {
@@ -259,7 +220,7 @@ void Console::ShellLoop()
 		}
 		else if (in == "l" || in == "Latex")
 		{
-			Latex(root);
+			manip.Latex(manip.GetRoot());
 		}
 		else if (in == "t" || in == "Tree")
 		{
