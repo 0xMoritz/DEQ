@@ -2,7 +2,7 @@
  * @file Addition.h
  * @brief Contains class for addition of elements
  *
- *  Created on: Dec 26, 2022
+ *  Created on: 2022-12-26
  *      Author: Moritz Geßner
  */
 
@@ -15,7 +15,7 @@
 class Addition : public MultiTerm
 {
 public:
-	Addition(Term* _parent, std::list<Term*>* _subTerms);
+	Addition(Term* _parent);
 	void Append(Term* t);
 	std::string Print() override;
 	std::string Tex() override;

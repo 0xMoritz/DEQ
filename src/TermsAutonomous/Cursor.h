@@ -2,7 +2,7 @@
  * @file Cursor.h
  * @brief Contains class for the cursor in interactive input of an equation
  *
- *  Created on: Dec 26, 2022
+ *  Created on: 2022-12-26
  *      Author: Moritz Geßner
  */
 

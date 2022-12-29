@@ -2,7 +2,7 @@
  * @file Multiplication.h
  * @brief Contains class for Multiplication of elements
  *
- *  Created on: Dec 26, 2022
+ *  Created on: 2022-12-26
  *      Author: Moritz Geßner
  */
 
@@ -15,7 +15,7 @@
 class Multiplication : public MultiTerm
 {
 public:
-	Multiplication(Term* _parent, std::list<Term*>* _subTerms);
+	Multiplication(Term* _parent);
 	void Append(Term* t);
 	std::string Print() override;
 	std::string Tex() override;

@@ -8,6 +8,11 @@ Raw::Raw(Term* _parent) : AutonomousTerm(_parent)
 	treeLabel = "raw";
 	text = "";
 }
+
+Raw::~Raw()
+{
+	//cout << "killing raw. ";
+}
 // This might be usefull later
 /*
 try

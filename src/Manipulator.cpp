@@ -9,6 +9,25 @@ Manipulator::Manipulator()
 	Cursor::SetActive(dynamic_cast<Cursor*>(root));
 }
 
+void Manipulator::Replace(Term* oldTerm, Term* newTerm)
+{
+	// For now we assume, that the old Term didn't have subTerms
+	// assert(dynamic_cast<AutonomousTerm*>(oldTerm) != nullptr);
+	assert(oldTerm != nullptr);
+	assert(newTerm != nullptr);
+	if (oldTerm->GetParent() == nullptr) // == root
+	{
+		assert(oldTerm == root);
+		root = newTerm;
+		newTerm->SetParent(nullptr);
+		//debugText += "replaced Root with cursor";
+	}
+	else
+	{
+		oldTerm->GetParent()->ReplaceSubTerm(oldTerm, newTerm);
+	}
+}
+
 void Manipulator::SetRoot(Term*& _root)
 {
 	root = _root;
@@ -49,7 +68,8 @@ void Manipulator::InsertDigit(int digit)
 	}
 
 }
-void Manipulator::Backspace()
+
+void Manipulator::CursorMoveLeft()
 {
 	Cursor* c = Cursor::GetActive();
 	if (c->GetLeft() == nullptr)
@@ -57,7 +77,7 @@ void Manipulator::Backspace()
 	if (typeid(*c->GetLeft()) == typeid(Raw))
 	{
 		Raw* raw = dynamic_cast<Raw*>(c->GetLeft());
-		raw->Backspace();
+		string swap = raw->Backspace();
 		// if raw becomes "empty"
 		if (raw->IsEmpty())
 		{
@@ -67,24 +87,7 @@ void Manipulator::Backspace()
 		}
 	}
 }
-void Manipulator::CursorMoveLeft()
-{
-	Cursor* c = Cursor::GetActive();
-	if (c->GetLeft() == nullptr)
-		return;
-	if (typeid(*c->GetLeft()) == typeid(Raw))
-	{/*
-		Raw* raw = dynamic_cast<Raw*>(c->GetLeft());
-		string swap = raw->Backspace();
-		// if raw becomes "empty"
-		if (raw->IsEmpty())
-		{
-			//TODO: implement a replace method.
-			assert(typeid(*c->GetParent()) == typeid(Connect2));
-			///TODO, attention with the hirarchy...
-		}*/
-	}
-}
+
 void Manipulator::CursorMoveRight()
 {
 	Cursor* c = Cursor::GetActive();
@@ -101,6 +104,46 @@ void Manipulator::CursorMoveRight()
 			assert(typeid(*c->GetParent()) == typeid(Connect2));
 			///TODO, attention with the hirarchy...
 		}*/
+	}
+}
+
+void Manipulator::FindCursorNeighbours()
+{
+	Cursor* c = Cursor::GetActive();
+	if (c->GetParent() == nullptr)
+	{
+		assert(dynamic_cast<Term*>(c) == root);
+		c->SetLeft(nullptr);
+		c->SetRight(nullptr);
+		//debugText += "Cursor=Root";
+	}
+	else
+	{
+		//TODO
+	}
+}
+
+void Manipulator::Backspace()
+{
+	Cursor* c = Cursor::GetActive();
+	if (c->GetLeft() == nullptr)
+		return;
+	if (typeid(*c->GetLeft()) == typeid(Raw))
+	{
+		Raw* raw = dynamic_cast<Raw*>(c->GetLeft());
+		raw->Backspace();
+		// if raw becomes "empty"
+		if (raw->IsEmpty())
+		{
+			Term* parent = c->GetParent();
+			assert(typeid(*parent) == typeid(Connect2));
+			Replace(parent, dynamic_cast<Term*>(c));
+			//TODO: replace *CLeft, *CRights
+			delete parent;
+			delete raw;
+			//TODO
+			FindCursorNeighbours();
+		}
 	}
 }
 

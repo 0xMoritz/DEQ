@@ -2,7 +2,7 @@
  * @file global.h
  * @brief Contains Library includes
  *
- *  Created on: Dec 19, 2022
+ *  Created on: 2022-12-19
  *      Author: Moritz Geßner
  */
 

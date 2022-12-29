@@ -2,7 +2,7 @@
  * @file Connect2.h
  * @brief Contains class for undefined relation between two consecutive Terms
  *
- *  Created on: Dec 26, 2022
+ *  Created on: 2022-12-26
  *      Author: Moritz Geßner
  */
 

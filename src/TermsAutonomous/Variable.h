@@ -2,7 +2,7 @@
  * @file Variable.h
  * @brief Contains class Variable, that describes a certain object to solve or differentiate by
  *
- *  Created on: Dec 26, 2022
+ *  Created on: 2022-12-26
  *      Author: Moritz Geßner
  */
 

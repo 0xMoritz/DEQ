@@ -87,7 +87,7 @@ int Console::Input(char& key) // return 3 to exit InteractiveInput, -1 to exit p
 		}
 		else
 		{
-			throw ((string)"Illegal input: " + to_string(static_cast<int>(key)));
+			// Pressing actual Escape key
 			return 3;
 		}
 	}
@@ -181,8 +181,9 @@ int Console::InteractiveInput()
 	newTermios.c_lflag &= ~(ICANON | ECHO);
 	tcsetattr(fd, TCSANOW, &newTermios);
 
+	PrintTermToConsole(manip.GetRoot());
+	int depth = PrintTreeToConsole(manip.GetRoot());
 	int res = 0;
-	int depth = 0;
 	char key;
 	while (1)
 	{
@@ -213,14 +214,17 @@ int Console::InteractiveInput()
 				cout << "\b"; // Bring back cursor with \b
 
 				// Print status
+				manip.debugText += to_string(depth) + "->";
 				PrintTermToConsole(manip.GetRoot());
 				depth = PrintTreeToConsole(manip.GetRoot());
+				manip.debugText += to_string(depth) + ".";
 				//cout << (int)key << endl;
 
 				// Debug Line
 				if (manip.debugText.length() > CONSOLE_WIDTH)
 					manip.debugText = manip.debugText.substr(manip.debugText.length() - CONSOLE_WIDTH, CONSOLE_WIDTH); // Restrict length to prevent overflow
 				cout << string(CONSOLE_WIDTH - manip.debugText.length(), ' ') << manip.debugText << endl;
+				manip.debugText = ""; // Reset debug text
 				//cout << "\b";
 			}
 		}
@@ -248,7 +252,7 @@ void Console::ShellLoop()
 		cin >> in;
 		if (in == "i" || in == "Interactive")
 		{
-			cout << "Entering Interactive input" << endl << endl;
+			cout << "Entering Interactive input" << endl;
 			int out = InteractiveInput();
 			if (out != 0)
 				break;

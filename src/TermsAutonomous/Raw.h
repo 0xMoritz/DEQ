@@ -2,7 +2,7 @@
  * @file Raw.h
  * @brief Contains the class for unparsed Term segments
  *
- *  Created on: Dec 26, 2022
+ *  Created on: 2022-12-26
  *      Author: Moritz Geßner
  */
 
@@ -16,6 +16,7 @@ private:
 	std::string text;
 public:
 	Raw(Term* _parent);
+	~Raw();
 	std::string Print() override;
 	std::string Tex() override;
 	void Append(std::string s);

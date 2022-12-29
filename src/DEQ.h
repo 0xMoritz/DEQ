@@ -2,7 +2,7 @@
  * @file DEQ.h
  * @brief Contains Main Function and Console Output commands
  *
- *  Created on: Dec 16, 2022
+ *  Created on: 2022-12-16
  *      Author: Moritz Geßner
  */
 

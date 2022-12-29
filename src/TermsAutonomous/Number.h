@@ -2,7 +2,7 @@
  * @file Number.h
  * @brief Contains class for a number with a definite value
  *
- *  Created on: Dec 26, 2022
+ *  Created on: 2022-12-26
  *      Author: Moritz Geßner
  */
 

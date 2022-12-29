@@ -2,7 +2,7 @@
  * @file MultiTerm.h
  * @brief Subclass of Term with an arbitrary number of subTerms
  *
- *  Created on: Dec 26, 2022
+ *  Created on: 2022-12-26
  *      Author: Moritz Geßner
  */
 
@@ -14,8 +14,11 @@
 class MultiTerm : public Term
 {
 protected:
-	std::list<Term*>* subTerms;
+	std::list<Term*> subTerms;
 public:
 	MultiTerm(Term* _parent);
+	virtual ~MultiTerm();
+	std::list<Term*> GetSubTerms() override;
 	int Tree(StringTree& tree, int& maxDepth) override;
+	void ReplaceSubTerm(Term* oldTerm, Term* newTerm) override;
 };

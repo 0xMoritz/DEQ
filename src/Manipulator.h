@@ -2,7 +2,7 @@
  * @file DEQ.h
  * @brief Contains Main Function and Console Output commands
  *
- *  Created on: Dec 16, 2022
+ *  Created on: 2022-12-16
  *      Author: Moritz Geßner
  */
 
@@ -25,6 +25,8 @@ class Manipulator
 {
 private:
 	Term* root;
+	void Replace(Term* oldTerm, Term* newTerm);
+	void FindCursorNeighbours(); // Finds and sets Cursor.left and Cursor.right
 public:
 	std::string debugText = "";
 	Manipulator();

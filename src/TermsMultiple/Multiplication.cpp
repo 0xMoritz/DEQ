@@ -3,22 +3,21 @@
 using namespace std;
 
 
-Multiplication::Multiplication(Term* _parent, list<Term*>* _subTerms) : MultiTerm(_parent)
+Multiplication::Multiplication(Term* _parent) : MultiTerm(_parent)
 {
 	treeLabel = "mul";
-	subTerms = _subTerms;
 }
 void Multiplication::Append(Term* t)
 {
-	subTerms->push_back(t);
+	subTerms.push_back(t);
 }
 string Multiplication::Print()
 {
 	string s;
-	if (subTerms->size() > 0)
+	if (subTerms.size() > 0)
 	{
-		s += subTerms->front()->Print();
-		for (auto factor = ++subTerms->begin(); factor != subTerms->end(); factor++)
+		s += subTerms.front()->Print();
+		for (auto factor = ++subTerms.begin(); factor != subTerms.end(); factor++)
 		{
 			assert(*factor!=nullptr);
 			if (typeid(**factor) == typeid(Raw))
@@ -34,10 +33,10 @@ string Multiplication::Print()
 string Multiplication::Tex()
 {
 	string s;
-	if (subTerms->size() > 0)
+	if (subTerms.size() > 0)
 	{
-		s += subTerms->front()->Tex();
-		for (auto factor = ++subTerms->begin(); factor != subTerms->end(); factor++)
+		s += subTerms.front()->Tex();
+		for (auto factor = ++subTerms.begin(); factor != subTerms.end(); factor++)
 		{
 			assert(*factor!=nullptr);
 			if (typeid(**factor) == typeid(Raw))

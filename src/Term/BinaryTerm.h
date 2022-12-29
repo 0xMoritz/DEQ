@@ -2,7 +2,7 @@
  * @file BinaryTerm.h
  * @brief Subclass of Term with two subTerms
  *
- *  Created on: Dec 26, 2022
+ *  Created on: 2022-12-26
  *      Author: Moritz Geßner
  */
 
@@ -19,9 +19,12 @@ protected:
 public:
 	BinaryTerm(Term* _parent);
 	BinaryTerm(Term* _parent, Term* _sub1, Term* _sub2);
+	virtual ~BinaryTerm();
+	std::list<Term*> GetSubTerms() override;
 	Term* GetSub1();
 	void SetSub1(Term* newSub1);
 	Term* GetSub2();
 	void SetSub2(Term* newSub2);
 	int Tree(StringTree& tree, int& maxDepth) override;
+	void ReplaceSubTerm(Term* oldTerm, Term* newTerm) override;
 };

@@ -7,14 +7,23 @@ MultiTerm::MultiTerm(Term* _parent) : Term(_parent)
 {
 
 }
+MultiTerm::~MultiTerm()
+{
+	//cout << "killing MultiTerm. ";
+}
+
+list<Term*> MultiTerm::GetSubTerms()
+{
+	return subTerms;
+}
 
 int MultiTerm::Tree(StringTree& tree, int& maxDepth)
 {
-	if (subTerms->size() > 0)
+	if (subTerms.size() > 0)
 	{
 		int len = 0;
 		maxDepth = 0;
-		for (auto subTerm = subTerms->begin(); subTerm != subTerms->end(); subTerm++)
+		for (auto subTerm = subTerms.begin(); subTerm != subTerms.end(); subTerm++)
 		{
 			int subMaxDepth = 0;
 			StringTree* subTree = new StringTree{};
@@ -31,4 +40,23 @@ int MultiTerm::Tree(StringTree& tree, int& maxDepth)
 		return len;
 	}
 	return Term::Tree(tree, maxDepth);
+}
+
+void MultiTerm::ReplaceSubTerm(Term* newTerm, Term* oldTerm)
+{
+	if (subTerms.size() > 0)
+	{
+		oldTerm->SetParent(nullptr);
+		newTerm->SetParent(this);
+
+		for (auto subTerm = subTerms.begin(); subTerm != subTerms.end(); subTerm++)
+		{
+			if (oldTerm == *subTerm)
+			{
+				*subTerm = newTerm;
+				return;
+			}
+		}
+		throw (string)"Replace method was called in MultiTerm " + PtrAddress(this) + " but Term to replace couldn't be found";
+	}
 }

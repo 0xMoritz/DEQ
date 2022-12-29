@@ -2,7 +2,7 @@
  * @file SingularTerm.h
  * @brief Subclass of Term with one subTerm
  *
- *  Created on: Dec 26, 2022
+ *  Created on: 2022-12-26
  *      Author: Moritz Geßner
  */
 
@@ -17,4 +17,7 @@ protected:
 	Term* sub = nullptr;
 public:
 	SingularTerm(Term* _parent);
+	virtual ~SingularTerm();
+	std::list<Term*> GetSubTerms() override;
+	void ReplaceSubTerm(Term* oldTerm, Term* newTerm) override;
 };

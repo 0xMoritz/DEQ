@@ -21,6 +21,7 @@ OBJECTS     := $(patsubst $(SRCDIR)/%,$(BUILDDIR)/%,$(SOURCES:.$(SRCEXT)=.$(OBJE
 
 # Default Make
 all: resources $(TARGET)
+	@echo "Finished."
 
 # Remake
 remake: cleaner all

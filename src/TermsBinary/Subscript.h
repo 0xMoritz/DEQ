@@ -2,7 +2,7 @@
  * @file Subscript.h
  * @brief Contains Binary Term that connects a subscript to a main term
  *
- *  Created on: Dec 26, 2022
+ *  Created on: 2022-12-26
  *      Author: Moritz Geßner
  */
 
