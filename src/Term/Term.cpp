@@ -22,7 +22,7 @@ void Term::SetParent(Term* newParent)
 	parent = newParent;
 }
 
-list<Term*> Term::GetSubTerms()
+vector<Term*> Term::GetSubTerms()
 {
 	throw (string)"Called GetSubTerms on Term base object";
 }

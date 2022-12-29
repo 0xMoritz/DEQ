@@ -12,7 +12,7 @@ MultiTerm::~MultiTerm()
 	//cout << "killing MultiTerm. ";
 }
 
-list<Term*> MultiTerm::GetSubTerms()
+vector<Term*> MultiTerm::GetSubTerms()
 {
 	return subTerms;
 }

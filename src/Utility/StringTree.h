@@ -16,7 +16,7 @@ class StringTree
 {
 public:
 	~StringTree();
-	std::list<StringTree*> subTrees;
+	std::vector<StringTree*> subTrees;
 	std::string s = "";
 	std::string Write(int depth);
 };

@@ -13,9 +13,9 @@ AutonomousTerm::~AutonomousTerm()
 	//cout << "killing AutonomousTerm. " << endl;
 }
 
-list<Term*> AutonomousTerm::GetSubTerms()
+vector<Term*> AutonomousTerm::GetSubTerms()
 {
-	return list<Term*>{};
+	return vector<Term*>{};
 }
 
 int AutonomousTerm::Tree(StringTree& tree, int& maxDepth)

@@ -18,6 +18,6 @@ protected:
 public:
 	SingularTerm(Term* _parent);
 	virtual ~SingularTerm();
-	std::list<Term*> GetSubTerms() override;
+	std::vector<Term*> GetSubTerms() override;
 	void ReplaceSubTerm(Term* oldTerm, Term* newTerm) override;
 };

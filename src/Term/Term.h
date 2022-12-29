@@ -26,7 +26,7 @@ public:
 	Term* GetParent();
 	void SetParent(Term* newParent);
 
-	virtual std::list<Term*> GetSubTerms();
+	virtual std::vector<Term*> GetSubTerms();
 	virtual Term Derivative();
 	virtual std::string Print();
 	virtual std::string Tex();

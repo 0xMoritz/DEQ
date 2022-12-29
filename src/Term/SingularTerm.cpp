@@ -13,9 +13,9 @@ SingularTerm::~SingularTerm()
 	//cout << "killing SingularTerm. ";
 }
 
-list<Term*> SingularTerm::GetSubTerms()
+vector<Term*> SingularTerm::GetSubTerms()
 {
-	return list<Term*>{sub};
+	return vector<Term*>{sub};
 }
 
 void SingularTerm::ReplaceSubTerm(Term* oldTerm, Term* newTerm)

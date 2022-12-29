@@ -17,7 +17,7 @@ protected:
 public:
 	AutonomousTerm(Term* _parent);
 	virtual ~AutonomousTerm();
-	std::list<Term*> GetSubTerms() override;
+	std::vector<Term*> GetSubTerms() override;
 	int Tree(StringTree& tree, int& maxDepth) override;
 	void ReplaceSubTerm(Term* oldTerm, Term* newTerm) override;
 };

@@ -14,11 +14,11 @@
 class MultiTerm : public Term
 {
 protected:
-	std::list<Term*> subTerms;
+	std::vector<Term*> subTerms;
 public:
 	MultiTerm(Term* _parent);
 	virtual ~MultiTerm();
-	std::list<Term*> GetSubTerms() override;
+	std::vector<Term*> GetSubTerms() override;
 	int Tree(StringTree& tree, int& maxDepth) override;
 	void ReplaceSubTerm(Term* oldTerm, Term* newTerm) override;
 };

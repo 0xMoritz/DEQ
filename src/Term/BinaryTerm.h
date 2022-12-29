@@ -20,7 +20,7 @@ public:
 	BinaryTerm(Term* _parent);
 	BinaryTerm(Term* _parent, Term* _sub1, Term* _sub2);
 	virtual ~BinaryTerm();
-	std::list<Term*> GetSubTerms() override;
+	std::vector<Term*> GetSubTerms() override;
 	Term* GetSub1();
 	void SetSub1(Term* newSub1);
 	Term* GetSub2();

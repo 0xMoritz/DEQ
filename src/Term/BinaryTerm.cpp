@@ -19,9 +19,9 @@ BinaryTerm::~BinaryTerm()
 	//cout << "Killing BinaryTerm. " << endl;
 }
 
-list<Term*> BinaryTerm::GetSubTerms()
+vector<Term*> BinaryTerm::GetSubTerms()
 {
-	return list<Term*>{sub1, sub2};
+	return vector<Term*>{sub1, sub2};
 }
 
 Term* BinaryTerm::GetSub1()
