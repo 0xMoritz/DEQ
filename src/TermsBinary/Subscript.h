@@ -15,6 +15,6 @@ class Subscript : public BinaryTerm
 {
 public:
 	Subscript(Term* _parent, Term* _main, Term* _sub);
-	std::string Print() override;
 	std::string Tex() override;
+	std::string Print() override;
 };

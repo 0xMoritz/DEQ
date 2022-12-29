@@ -17,6 +17,6 @@ private:
 	std::string s;
 public:
 	Empty(Term* _parent);
-	std::string Print() override;
 	std::string Tex() override;
+	std::string Print() override;
 };

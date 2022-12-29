@@ -15,6 +15,6 @@ class Power : public BinaryTerm
 {
 public:
 	Power(Term* _parent, Term* _base, Term* _exponent);
-	std::string Print() override;
 	std::string Tex() override;
+	std::string Print() override;
 };

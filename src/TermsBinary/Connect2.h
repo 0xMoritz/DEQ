@@ -15,6 +15,6 @@ class Connect2 : public BinaryTerm
 {
 public:
 	Connect2(Term* _parent);
-	std::string Print() override;
 	std::string Tex() override;
+	std::string Print() override;
 };

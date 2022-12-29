@@ -19,5 +19,7 @@ public:
 	SingularTerm(Term* _parent);
 	virtual ~SingularTerm();
 	std::vector<Term*> GetSubTerms() override;
+	Term* GetSubTerm();
 	void ReplaceSubTerm(Term* oldTerm, Term* newTerm) override;
+	size_t GetNumberOfSubTerms() override;
 };

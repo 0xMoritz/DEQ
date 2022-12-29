@@ -32,11 +32,11 @@ string Addition::Tex()
 	string s;
 	if (subTerms.size() > 0)
 	{
-		s += subTerms.front()->Tex();
+		s += subTerms.front()->GetTex();
 		for (auto summand = ++subTerms.begin(); summand != subTerms.end(); summand++)
 		{
 			assert(*summand!=nullptr);
-			s += " + " + (**summand).Tex();
+			s += " + " + (**summand).GetTex();
 		}
 		return s;
 	}

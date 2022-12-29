@@ -16,7 +16,7 @@ class Multiplication : public MultiTerm
 {
 public:
 	Multiplication(Term* _parent);
+	std::string Tex() override;
 	void Append(Term* t);
 	std::string Print() override;
-	std::string Tex() override;
 };

@@ -27,6 +27,8 @@ private:
 	Term* root;
 	void Replace(Term* oldTerm, Term* newTerm);
 	void FindCursorNeighbours(); // Finds and sets Cursor.left and Cursor.right
+	Term* GetRightmostTerm(Term* t);
+	Term* GetLeftmostTerm(Term* t);
 public:
 	std::string debugText = "";
 	Manipulator();

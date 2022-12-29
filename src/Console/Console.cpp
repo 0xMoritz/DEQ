@@ -13,7 +13,7 @@ void Console::PrintTermToConsole(Term*& t)
 }
 void Console::PrintLatexToConsole(Term*& t)
 {
-	cout << t->Tex() << endl;
+	cout << t->GetTex() << endl;
 }
 
 int Console::PrintTreeToConsole(Term*& t) // return maxDepth

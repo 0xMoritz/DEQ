@@ -110,17 +110,99 @@ void Manipulator::CursorMoveRight()
 void Manipulator::FindCursorNeighbours()
 {
 	Cursor* c = Cursor::GetActive();
-	if (c->GetParent() == nullptr)
+
+	// Find left Neighbour
+	Term* roof = c;
+
+	// Determine roof
+	while (1) // find the "roof" of the cursor, the first term in the line of parents, that has more than one child (which eventually leads to the cursor)
 	{
-		assert(dynamic_cast<Term*>(c) == root);
-		c->SetLeft(nullptr);
-		c->SetRight(nullptr);
-		//debugText += "Cursor=Root";
+		if (roof->GetParent() == nullptr)
+		{
+			assert(dynamic_cast<Term*>(roof) == root);
+			c->SetLeft(nullptr);
+			return;
+		}
+		roof = roof->GetParent();
+		if (roof->GetNumberOfSubTerms() > 1)
+		{
+			// Check if the additional Terms of that parent are left of the cursor
+			vector<Term*> roofSubs = roof->GetSubTerms();
+			auto it = begin(roofSubs);
+			for (;it != end(roofSubs); it++)
+			{
+				if (*it == roof)
+					break;
+			}
+			 //vector<Term*>::iterator
+			if (*it != roofSubs.front())
+			{
+				c->SetLeft(GetRightmostTerm(*(--it)));
+				return;
+			}
+		}
+		else
+		{
+			assert(roof->GetNumberOfSubTerms() != 0);
+			// Step up one layer to find roof
+			roof = roof->GetParent();
+		}
 	}
-	else
+
+	roof = c;
+
+	// Determine roof
+	while (1) // find the "roof" of the cursor, the first term in the line of parents, that has more than one child (which eventually leads to the cursor)
 	{
-		//TODO
+		if (roof->GetParent() == nullptr)
+		{
+			assert(dynamic_cast<Term*>(roof) == root);
+			c->SetRight(nullptr);
+			break;
+		}
+		roof = roof->GetParent();
+		if (roof->GetNumberOfSubTerms() > 1)
+		{
+			// Check if the additional Terms of that parent are right of the cursor
+			vector<Term*> roofSubs = roof->GetSubTerms();
+			auto it = begin(roofSubs);
+			for (;it != end(roofSubs); it++)
+			{
+				if (*it == roof)
+					break;
+			}
+			 //vector<Term*>::iterator
+			if (*it != roofSubs.front())
+			{
+				c->SetRight(GetLeftmostTerm(*(++it)));
+				break;
+			}
+		}
+		else
+		{
+			assert(roof->GetNumberOfSubTerms() != 0);
+			// Step up one layer to find roof
+			roof = roof->GetParent();
+		}
 	}
+}
+
+Term* Manipulator::GetRightmostTerm(Term* t)
+{
+	while(t->GetNumberOfSubTerms() > 0)
+	{
+		t = t->GetSubTerms().back();
+	}
+	return t;
+}
+
+Term* Manipulator::GetLeftmostTerm(Term* t)
+{
+	while(t->GetNumberOfSubTerms() > 0)
+	{
+		t = t->GetSubTerms().front();
+	}
+	return t;
 }
 
 void Manipulator::Backspace()
@@ -138,7 +220,6 @@ void Manipulator::Backspace()
 			Term* parent = c->GetParent();
 			assert(typeid(*parent) == typeid(Connect2));
 			Replace(parent, dynamic_cast<Term*>(c));
-			//TODO: replace *CLeft, *CRights
 			delete parent;
 			delete raw;
 			//TODO
@@ -156,7 +237,7 @@ void Manipulator::Delete()
 // Print Latex Equation
 int Manipulator::Latex(Term*& t)
 {
-	string eq = t->Tex();
+	string eq = t->GetTex();
 	// Write only the equation for GUI
 	{
 		string filename = "eq";
@@ -168,6 +249,7 @@ int Manipulator::Latex(Term*& t)
 	// Write to standalone latex file and execute pdfLatex
 	string compilePdfLatex =
 	"\\documentclass{standalone}\n"
+	"\\usepackage{xcolor}\n"
 	"\\begin{document}\n"
 		"\t$\\displaystyle\n\t"
 		+ eq +

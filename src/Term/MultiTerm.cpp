@@ -60,3 +60,8 @@ void MultiTerm::ReplaceSubTerm(Term* newTerm, Term* oldTerm)
 		throw (string)"Replace method was called in MultiTerm " + PtrAddress(this) + " but Term to replace couldn't be found";
 	}
 }
+
+size_t MultiTerm::GetNumberOfSubTerms()
+{
+	return subTerms.size();
+}

@@ -19,6 +19,6 @@ string Subscript::Print()
 string Subscript::Tex()
 {
 	string s = "";
-	s += "{" + sub1->Tex() + "}_{" + sub2->Tex() + "}";
+	s += "{" + sub1->GetTex() + "}_{" + sub2->GetTex() + "}";
 	return s;
 }

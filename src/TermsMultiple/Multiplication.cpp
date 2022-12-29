@@ -35,7 +35,7 @@ string Multiplication::Tex()
 	string s;
 	if (subTerms.size() > 0)
 	{
-		s += subTerms.front()->Tex();
+		s += subTerms.front()->GetTex();
 		for (auto factor = ++subTerms.begin(); factor != subTerms.end(); factor++)
 		{
 			assert(*factor!=nullptr);
@@ -43,7 +43,7 @@ string Multiplication::Tex()
 			{
 				s+= "\\times";
 			}
-			s += (**factor).Tex();
+			s += (**factor).GetTex();
 		}
 		return s;
 	}

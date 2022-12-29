@@ -17,6 +17,6 @@ class Addition : public MultiTerm
 public:
 	Addition(Term* _parent);
 	void Append(Term* t);
-	std::string Print() override;
 	std::string Tex() override;
+	std::string Print() override;
 };

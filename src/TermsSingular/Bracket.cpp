@@ -22,5 +22,5 @@ std::string Bracket::Print()
 std::string Bracket::Tex()
 {
 	assert(subTerm!=nullptr);
-	return "\\left(" + subTerm->Tex() + "\\right)";
+	return "\\left(" + subTerm->GetTex() + "\\right)";
 }

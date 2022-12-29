@@ -16,7 +16,7 @@ class Variable : public AutonomousTerm
 private:
 	std::string name;
 public:
+	std::string Tex() override;
 	Variable(Term* _parent, std::string _name);
 	std::string Print() override;
-	std::string Tex() override;
 };

@@ -18,6 +18,7 @@ protected:
 	Term* parent;
 	std::string treeLabel = "err";
 
+
 	static std::string PtrAddress(Term* ptr);
 public:
 	//~Term() = default;
@@ -25,13 +26,15 @@ public:
 	virtual ~Term();
 	Term* GetParent();
 	void SetParent(Term* newParent);
+	std::string GetTex();
 
+	virtual std::string Tex();
 	virtual std::vector<Term*> GetSubTerms();
 	virtual Term Derivative();
 	virtual std::string Print();
-	virtual std::string Tex();
 	virtual int Tree(StringTree& tree, int& maxDepth);
 	virtual void ReplaceSubTerm(Term* oldTerm, Term* newTerm);
+	virtual size_t GetNumberOfSubTerms();
 
 	static Term* WithoutCursor(Term* t);
 };

@@ -1,4 +1,5 @@
 #include "Term.h"
+#include "../TermsAutonomous/Cursor.h"
 
 using namespace std;
 
@@ -20,6 +21,16 @@ Term* Term::GetParent()
 void Term::SetParent(Term* newParent)
 {
 	parent = newParent;
+}
+
+string Term::GetTex()
+{
+	if (dynamic_cast<Term*>(this) == Cursor::GetActive()->GetLeft())
+		return "\\mathbin{\\color{red}" + Tex() + "}";
+	else if (dynamic_cast<Term*>(this) == Cursor::GetActive()->GetRight())
+		return "\\mathbin{\\color{green}" + Tex() + "}";
+	else
+		return Tex();
 }
 
 vector<Term*> Term::GetSubTerms()
@@ -67,4 +78,9 @@ string Term::PtrAddress(Term* ptr)
 	ss << address;
 	string addressString = ss.str();
 	return addressString;
+}
+
+size_t Term::GetNumberOfSubTerms()
+{
+	throw (string)"GetNumberOfSubTerms called on Term base class";
 }

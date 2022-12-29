@@ -20,4 +20,5 @@ public:
 	std::vector<Term*> GetSubTerms() override;
 	int Tree(StringTree& tree, int& maxDepth) override;
 	void ReplaceSubTerm(Term* oldTerm, Term* newTerm) override;
+	size_t GetNumberOfSubTerms() override;
 };

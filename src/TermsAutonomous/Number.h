@@ -16,8 +16,8 @@ private:
 	double value;
 public:
 	Number(Term* _parent);
-	std::string Print() override;
 	std::string Tex() override;
+	std::string Print() override;
 	bool IsEmpty();
 	//Term* ToRaw() ??
 	//bool IsZero() ??

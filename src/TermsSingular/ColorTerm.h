@@ -11,13 +11,14 @@
 #include "../Term/SingularTerm.h"
 
 
-class Bracket : SingularTerm
+class ColorTerm : SingularTerm
 {
 private:
 	Term* subTerm;
+	std::string color;
 public:
-	Bracket(Term* _parent, Term* _subTerm);
-	~Bracket();
+	ColorTerm(Term* _parent, Term* _subTerm, std::string _color);
+	~ColorTerm();
 	std::string Tex() override;
 	std::string Print() override;
 };

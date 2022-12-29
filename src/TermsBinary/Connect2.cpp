@@ -16,5 +16,5 @@ string Connect2::Tex()
 {
 	assert(sub1!=nullptr);
 	assert(sub2!=nullptr);
-	return sub1->Tex() + sub2->Tex();
+	return sub1->GetTex() + sub2->GetTex();
 }

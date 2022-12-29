@@ -22,6 +22,6 @@ string Power::Tex()
 	string s = "";
 	assert(sub1!=nullptr);
 	assert(sub2!=nullptr);
-	s += "{" + sub1->Tex() + "}^{" + sub2->Tex() + "}";
+	s += "{" + sub1->GetTex() + "}^{" + sub2->GetTex() + "}";
 	return s;
 }

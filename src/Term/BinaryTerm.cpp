@@ -88,3 +88,8 @@ void BinaryTerm::ReplaceSubTerm(Term* oldTerm, Term* newTerm)
 		throw (string)"Replace method was called in BinaryTerm " + PtrAddress(this) + " but Term to replace couldn't be found";
 	}
 }
+
+size_t BinaryTerm::GetNumberOfSubTerms()
+{
+	return 2;
+}

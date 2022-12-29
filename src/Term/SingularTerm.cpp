@@ -18,6 +18,11 @@ vector<Term*> SingularTerm::GetSubTerms()
 	return vector<Term*>{sub};
 }
 
+Term* SingularTerm::GetSubTerm()
+{
+	return sub;
+}
+
 void SingularTerm::ReplaceSubTerm(Term* oldTerm, Term* newTerm)
 {
 	if (oldTerm == sub)
@@ -30,4 +35,9 @@ void SingularTerm::ReplaceSubTerm(Term* oldTerm, Term* newTerm)
 	{
 		throw (string)("Replace method was called in SingularTerm " + PtrAddress(this) + " but Term to replace couldn't be found");
 	}
+}
+
+size_t SingularTerm::GetNumberOfSubTerms()
+{
+	return 1;
 }

@@ -27,3 +27,8 @@ void AutonomousTerm::ReplaceSubTerm(Term* newTerm, Term* oldTerm)
 {
 	throw (string)"Replace has been called on AutonomousTerm" + PtrAddress(this);
 }
+
+size_t AutonomousTerm::GetNumberOfSubTerms()
+{
+	return 0;
+}
