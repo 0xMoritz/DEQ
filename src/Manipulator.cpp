@@ -132,6 +132,10 @@ void Manipulator::InsertDigit(int digit)
 			assert(root==c);
 			root = static_cast<Term*>(newParent);
 		}
+		else
+		{
+			Replace(c, newParent);
+		}
 		Raw* newRaw = new Raw(newParent);
 		newParent->SetSub1(newRaw);
 		c->SetParent(newParent);
@@ -154,7 +158,7 @@ void Manipulator::CursorMoveLeft()
 	Cursor* c = Cursor::GetActive();
 	if (CursorLeft() == nullptr)
 		return;
-	if (Term::IsType<Raw>(CursorLeft()))
+	if (Term::IsType<Raw>(CursorLeft())) // Left already has a Raw type
 	{
 		Raw* left = dynamic_cast<Raw*>(CursorLeft());
 		string swap = left->Backspace();
@@ -173,21 +177,21 @@ void Manipulator::CursorMoveLeft()
 			//         /   |
 			//      left  cursor
 			assert(Term::IsType<Connect2>(c->GetParent()));
-			Connect2* leftCo2 = dynamic_cast<Connect2*>(c->GetParent());
-			Connect2* rightCo2 = new Connect2(leftCo2->GetParent());
-			Replace(leftCo2, rightCo2);
-			rightCo2->SetSub1(leftCo2);
+			Connect2* directCo2 = dynamic_cast<Connect2*>(c->GetParent());
+			Connect2* indirectCo2 = new Connect2(directCo2->GetParent());
+			Replace(directCo2, indirectCo2);
+			indirectCo2->SetSub1(directCo2);
 
-			Raw* right = new Raw(rightCo2);
-			rightCo2->SetSub2(right);
+			Raw* right = new Raw(indirectCo2);
+			indirectCo2->SetSub2(right);
 			right->AppendLeft(swap);
 		}
 
 		if (left->IsEmpty())
 		{
-			Term* parent = c->GetParent();
+			Term* parent = left->GetParent();
 			assert(Term::IsType<Connect2>(parent));
-			Replace(parent, dynamic_cast<Term*>(c));
+			Replace(parent, dynamic_cast<Connect2*>(parent)->GetSub2());
 			DeleteTerm(parent);
 			DeleteTerm(left);
 		}
@@ -196,20 +200,47 @@ void Manipulator::CursorMoveLeft()
 
 void Manipulator::CursorMoveRight()
 {
+	// Analogous to moveLeft I hope
 	Cursor* c = Cursor::GetActive();
 	if (CursorRight() == nullptr)
 		return;
 	if (Term::IsType<Raw>(CursorRight()))
-	{/*
-		TODO: first finish move left
-		Raw* raw = dynamic_cast<Raw*>(CursorLeft());
-		string swap = raw->Backspace();
-		// if raw becomes "empty"
-		if (raw->IsEmpty())
+	{
+		Raw* right = dynamic_cast<Raw*>(CursorRight());
+		string swap = right->Delete();
+		// Add swap to the right
+		if (Term::IsType<Raw>(CursorLeft())) // Right already has a Raw type
 		{
-			//TODO: implement a replace method.
-			///TODO, attention with the hirarchy...
-		}*/
+			Raw* left = dynamic_cast<Raw*>(CursorLeft());
+			left->AppendRight(swap);
+		}
+		else
+		{
+			// Construct a suspension such that
+			//             co2
+			//            /   |
+			//		   left  co2
+			//         		/   |
+			//          cursor right
+			assert(Term::IsType<Connect2>(c->GetParent()));
+			Connect2* directCo2 = dynamic_cast<Connect2*>(c->GetParent());
+			Connect2* indirectCo2 = new Connect2(directCo2->GetParent());
+			Replace(directCo2, indirectCo2);
+			indirectCo2->SetSub2(directCo2);
+
+			Raw* right = new Raw(indirectCo2);
+			indirectCo2->SetSub1(right);
+			right->AppendLeft(swap);
+		}
+
+		if (right->IsEmpty())
+		{
+			Term* parent = right->GetParent();
+			assert(Term::IsType<Connect2>(parent));
+			Replace(parent, dynamic_cast<Connect2*>(parent)->GetSub1());
+			DeleteTerm(parent);
+			DeleteTerm(right);
+		}
 	}
 }
 
