@@ -174,11 +174,14 @@ int Console::InteractiveInput()
 				}
 				cout << "\b"; // Bring back cursor with \b
 
+				// CheckConnections
+				bool areThereErrors = manip.CheckConnections(manip.GetRoot());
+				if (areThereErrors)
+					manip.debugText += "[Error] Connection Check. ";
+
 				// Print status
-				manip.debugText += to_string(depth) + "->";
 				PrintTermToConsole(manip.GetRoot());
 				depth = PrintTreeToConsole(manip.GetRoot());
-				manip.debugText += to_string(depth) + ".";
 				//cout << (int)key << endl;
 
 				// Debug Line

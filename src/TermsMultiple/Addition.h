@@ -14,9 +14,11 @@
 
 class Addition : public MultiTerm
 {
+private:
+	std::vector<char> signs; // should be either signs '+', '-' or ' ' (for first summand)
 public:
 	Addition(Term* _parent);
-	void Append(Term* t);
+	void Append(Term* t, char sign);
 	std::string Tex() override;
 	std::string Print() override;
 };

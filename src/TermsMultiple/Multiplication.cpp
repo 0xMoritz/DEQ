@@ -8,23 +8,22 @@ Multiplication::Multiplication(Term* _parent) : MultiTerm(_parent)
 {
 	treeLabel = "mul";
 }
-void Multiplication::Append(Term* t)
+void Multiplication::Append(Term* t, char symbol)
 {
 	subTerms.push_back(t);
+	symbols.push_back(symbol);
 }
 string Multiplication::Print()
 {
 	string s;
 	if (subTerms.size() > 0)
 	{
-		s += subTerms.front()->Print();
-		for (ITERATOR factor = ++subTerms.begin(); factor != subTerms.end(); factor++)
+		vector<char>::iterator symbol = symbols.begin();
+		for (ITERATOR factor = subTerms.begin(); factor != subTerms.end(); factor++, symbol++)
 		{
 			assert(*factor!=nullptr);
-			if (Term::IsType<Raw>(*factor))
-			{
-				s+= "×";
-			}
+			if (*symbol == '*')
+				s += " × ";
 			s += (**factor).Print();
 		}
 		return s;
@@ -36,14 +35,12 @@ string Multiplication::Tex()
 	string s;
 	if (subTerms.size() > 0)
 	{
-		s += subTerms.front()->GetTex();
-		for (ITERATOR factor = ++subTerms.begin(); factor != subTerms.end(); factor++)
+		vector<char>::iterator symbol = symbols.begin();
+		for (ITERATOR factor = subTerms.begin(); factor != subTerms.end(); factor++, symbol++)
 		{
 			assert(*factor!=nullptr);
-			if (Term::IsType<Raw>(*factor))
-			{
-				s+= "\\times";
-			}
+			if (*symbol == '*')
+				s += "\\times";
 			s += (**factor).GetTex();
 		}
 		return s;

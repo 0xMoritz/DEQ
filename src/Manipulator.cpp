@@ -326,7 +326,26 @@ int Manipulator::Latex(Term*& t)
 
 bool Manipulator::CheckConnections(Term*& t)
 {
-	//error
+	if (t == nullptr)
+	{
+		return 1;
+	}
+	else if (t == root)
+	{
+		if (t->GetParent() != nullptr)
+			return 1;
+	}
+	vector<Term*> subTerms = t->GetSubTerms();
+	for (vector<Term*>::iterator it = subTerms.begin(); it != subTerms.end(); it++)
+	{
+		if (*it == nullptr)
+			return 1;
+		else if ((*it)->GetParent() != t)
+			return 1;
+		else if (CheckConnections(*it))
+			return 1;
+	}
+	return 0;
 }
 
 

@@ -14,9 +14,11 @@
 
 class Multiplication : public MultiTerm
 {
+private:
+	std::vector<char> symbols; // Contains '*' and ' '
 public:
 	Multiplication(Term* _parent);
 	std::string Tex() override;
-	void Append(Term* t);
+	void Append(Term* t, char symbol);
 	std::string Print() override;
 };

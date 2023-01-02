@@ -9,20 +9,23 @@ Addition::Addition(Term* _parent) : MultiTerm(_parent)
 {
 	treeLabel = "add";
 }
-void Addition::Append(Term* t)
+void Addition::Append(Term* t, char sign)
 {
 	subTerms.push_back(t);
+	signs.push_back(sign);
 }
 string Addition::Print()
 {
 	string s;
 	if (subTerms.size() > 0)
 	{
-		s += subTerms.front()->Print();
-		for (ITERATOR summand = ++subTerms.begin(); summand != subTerms.end(); summand++)
+		vector<char>::iterator sign = signs.begin();
+		for (ITERATOR summand = subTerms.begin(); summand != subTerms.end(); summand++, sign++)
 		{
 			assert(*summand!=nullptr);
-			s += " + " + (**summand).Print();
+			if (*sign != ' ')
+				s += ' ' + *sign + ' ';
+			s += (**summand).Print();
 		}
 		return s;
 	}
@@ -33,11 +36,13 @@ string Addition::Tex()
 	string s;
 	if (subTerms.size() > 0)
 	{
-		s += subTerms.front()->GetTex();
-		for (ITERATOR summand = ++subTerms.begin(); summand != subTerms.end(); summand++)
+		vector<char>::iterator sign = signs.begin();
+		for (ITERATOR summand = ++subTerms.begin(); summand != subTerms.end(); summand++, sign++)
 		{
 			assert(*summand!=nullptr);
-			s += " + " + (**summand).GetTex();
+			if (*sign != ' ')
+				s += ' ' + *sign + ' ';
+			s += (**summand).GetTex();
 		}
 		return s;
 	}
