@@ -35,7 +35,7 @@ string Raw::Tex()
 }
 void Raw::AppendRight(string s)
 {
-	text += s;
+	text = text + s;
 }
 void Raw::AppendLeft(string s)
 {

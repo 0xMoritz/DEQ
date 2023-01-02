@@ -6,8 +6,6 @@ using namespace std;
 Cursor::Cursor(Term* _parent) : AutonomousTerm(_parent)
 {
 	treeLabel = "|";
-	left = nullptr;
-	right = nullptr;
 }
 string Cursor::Print()
 {
@@ -26,20 +24,4 @@ Cursor* Cursor::GetActive()
 void Cursor::SetActive(Cursor* newActive)
 {
 	activeCursor = newActive;
-}
-Term* Cursor::GetLeft()
-{
-	return left;
-}
-void Cursor::SetLeft(Term* newLeft)
-{
-	left = newLeft;
-}
-Term* Cursor::GetRight()
-{
-	return right;
-}
-void Cursor::SetRight(Term* newRight)
-{
-	right = newRight;
 }

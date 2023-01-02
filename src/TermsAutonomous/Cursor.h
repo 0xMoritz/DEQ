@@ -14,17 +14,11 @@
 class Cursor : public AutonomousTerm
 {
 private:
-	Term* left;
-	Term* right;
 	static Cursor* activeCursor; // I suppose it might be usefull to have more than one cursor, to store in not actively editing equations for instance, but only one cursor should be capable of writing active input.
 public:
 	Cursor(Term* _parent);
 	std::string Print() override;
 	std::string Tex() override;
-	Term* GetLeft();
-	void SetLeft(Term* newLeft);
-	Term* GetRight();
-	void SetRight(Term* newRight);
 
 	static Cursor* GetActive();
 	static void SetActive(Cursor* newActive);

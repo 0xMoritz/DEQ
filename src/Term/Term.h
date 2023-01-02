@@ -17,7 +17,7 @@ class Term
 protected:
 	Term* parent;
 	std::string treeLabel = "err";
-	static std::string PtrAddress(Term* ptr);
+	std::string TreeLabel(bool withPtr);
 public:
 	//~Term() = default;
 	Term(Term* _parent);
@@ -30,10 +30,12 @@ public:
 	virtual std::vector<Term*> GetSubTerms();
 	virtual Term Derivative();
 	virtual std::string Print();
-	virtual int Tree(StringTree& tree, int& maxDepth);
+	virtual int Tree(StringTree& tree, int& maxDepth, bool withPtr=false);
+	int TreeWithAddress(StringTree& tree, int& maxDepth);
 	virtual void ReplaceSubTerm(Term* oldTerm, Term* newTerm);
 	virtual size_t GetNumberOfSubTerms();
 
+	static std::string PtrAddress(Term* ptr);
 	static Term* WithoutCursor(Term* t);
 
 	template<typename T> static bool IsType(const Term* t)

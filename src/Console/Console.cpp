@@ -16,11 +16,11 @@ void Console::PrintLatexToConsole(Term*& t)
 	cout << t->GetTex() << endl;
 }
 
-int Console::PrintTreeToConsole(Term*& t) // return maxDepth
+int Console::PrintTreeToConsole(Term*& t, bool withPtr) // return maxDepth
 {
 	StringTree tree{};
 	int maxDepth = 0;
-	t->Tree(tree, maxDepth);
+	t->Tree(tree, maxDepth, withPtr);
 	cout << tree.Write(maxDepth) << endl;
 	return maxDepth;
 }
@@ -218,21 +218,45 @@ void Console::ShellLoop()
 			if (out != 0)
 				break;
 		}
-		else if (in == "l" || in == "Latex")
+		else if (in == "l" || in == "latex")
 		{
 			manip.Latex(manip.GetRoot());
 		}
-		else if (in == "t" || in == "Tree")
+		else if (in == "t" || in == "tree")
 		{
 			PrintTreeToConsole(root);
 		}
-		else if (in == "x" || in == "q" || in == "Quit" || in == "Exit")
+		else if (in == "pt" || in == "ptrTree")
+		{
+			PrintTreeToConsole(root, true);
+		}
+		else if (in == "x" || in == "q" || in == "quit" || in == "exit")
 		{
 			break;
 		}
 		else if (in == "p" || in == "Print")
 		{
 			cout << root->Print() << endl;
+		}
+		else if (in == "ptrRoot")
+		{
+			cout << Term::PtrAddress(root) << endl;
+		}
+		else if (in == "ptrCursor")
+		{
+			cout << Term::PtrAddress(Cursor::GetActive()) << endl;
+		}
+		else if (in == "ptrLeft")
+		{
+			cout << root->PtrAddress(manip.CursorLeft()) << endl;
+		}
+		else if (in == "ptrRight")
+		{
+			cout << root->PtrAddress(manip.CursorRight()) << endl;
+		}
+		else if (in == "nullptr")
+		{
+			cout << root->PtrAddress((Term*)nullptr) << endl;
 		}
 	}
 }
@@ -296,7 +320,7 @@ int Console::PressBackspace()
 int Console::PressDelete()
 {
 	manip.Delete();
-	return 2;
+	return 0;
 }
 int Console::PressPlus()
 {

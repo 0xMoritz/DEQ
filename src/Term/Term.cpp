@@ -13,6 +13,14 @@ Term::~Term()
 	//cout << "killing base. ";
 }
 
+string Term::TreeLabel(bool withPtr)
+{
+	if (withPtr)
+		return treeLabel + ":" + Term::PtrAddress(this);
+	else
+		return treeLabel;
+}
+
 Term* Term::GetParent()
 {
 	return parent;
@@ -25,12 +33,12 @@ void Term::SetParent(Term* newParent)
 
 string Term::GetTex()
 {
-	if (dynamic_cast<Term*>(this) == Cursor::GetActive()->GetLeft())
-		return "\\mathbin{\\color{red}" + Tex() + "}";
-	else if (dynamic_cast<Term*>(this) == Cursor::GetActive()->GetRight())
-		return "\\mathbin{\\color{green}" + Tex() + "}";
-	else
-		return Tex();
+	//if (dynamic_cast<Term*>(this) == Cursor::GetActive()->GetLeft())
+	//	return "\\mathbin{\\color{red}" + Tex() + "}";
+	// else if (dynamic_cast<Term*>(this) == Cursor::GetActive()->GetRight())
+	// 	return "\\mathbin{\\color{green}" + Tex() + "}";
+	// else
+	return Tex();
 }
 
 vector<Term*> Term::GetSubTerms()
@@ -53,12 +61,15 @@ string Term::Tex()
 	return "err";
 }
 
-int Term::Tree(StringTree& tree, int& maxDepth)
+int Term::Tree(StringTree& tree, int& maxDepth, bool withPtr)
 {
-	maxDepth = 1;
-	// return value is length of string
-	tree.s = "(" + treeLabel + ")";
-	return treeLabel.length() + 2;
+	throw(string)"Tree() has been called on Term" + PtrAddress(this);
+}
+
+
+int Term::TreeWithAddress(StringTree& tree, int& maxDepth)
+{
+	return this->Tree(tree, maxDepth, 1);
 }
 
 Term* Term::WithoutCursor(Term* t)
@@ -68,7 +79,7 @@ Term* Term::WithoutCursor(Term* t)
 
 void Term::ReplaceSubTerm(Term* oldTerm, Term* newTerm)
 {
-	throw (string)"Function Replace has been called on Term" + PtrAddress(this) + "without subTerms";
+	throw (string)"Function Replace has been called on Term" + PtrAddress(this);
 }
 
 string Term::PtrAddress(Term* ptr)

@@ -37,12 +37,93 @@ Term*& Manipulator::GetRoot()
 	return root;
 }
 
+Term* Manipulator::CursorLeft()
+{
+	Cursor* c = Cursor::GetActive();
+	// Determine roof
+	Term* roof = c;
+	Term* oldRoof = roof;
+	while (1) // find the "roof" of the cursor, the first term in the line of parents, that has more than one child (which eventually leads to the cursor)
+	{
+		if (roof->GetParent() == nullptr)
+		{
+			assert(dynamic_cast<Term*>(roof) == root);
+			return nullptr;
+		}
+		oldRoof = roof;
+		roof = roof->GetParent();
+		if (roof->GetNumberOfSubTerms() > 1)
+		{
+			// Check if the additional Terms of that parent are left of the cursor
+			vector<Term*> roofSubs = roof->GetSubTerms();
+			for (vector<Term*>::iterator it=++roofSubs.begin();it != roofSubs.end(); it++)
+			{
+				if (*it == oldRoof)
+					return GetRightmostTerm(*(--it));
+			}
+		}
+	}
+	throw (string)"Could not find Cursorleft()";
+}
+
+Term* Manipulator::CursorRight()
+{
+	Cursor* c = Cursor::GetActive();
+	// Determine roof
+	Term* roof = c;
+	Term* oldRoof = roof;
+	while (1) // find the "roof" of the cursor, the first term in the line of parents, that has more than one child (which eventually leads to the cursor)
+	{
+		if (roof->GetParent() == nullptr)
+		{
+			assert(dynamic_cast<Term*>(roof) == root);
+			return nullptr;
+		}
+		oldRoof = roof;
+		roof = roof->GetParent();
+		if (roof->GetNumberOfSubTerms() > 1)
+		{
+			// Check if the additional Terms of that parent are right of the cursor
+			vector<Term*> roofSubs = roof->GetSubTerms();
+			for (vector<Term*>::iterator it=roofSubs.begin();it != --roofSubs.end(); it++)
+			{
+				if (*it == oldRoof)
+					return GetLeftmostTerm(*(++it));
+			}
+		}
+	}
+	throw (string)"Could not find CursorRight()";
+}
+
+Term* Manipulator::GetRightmostTerm(Term* t)
+{
+	if (t==nullptr)
+		return nullptr;
+	while(t->GetNumberOfSubTerms() > 0)
+	{
+		//DebugLog(to_string(t->GetNumberOfSubTerms()));
+		t = t->GetSubTerms().back();
+		//DebugLog("t==nullptr:" + (t == nullptr)? "1" : "0");
+		//DebugLog(typeid(t).name());
+	}
+	return t;
+}
+
+Term* Manipulator::GetLeftmostTerm(Term* t)
+{
+	while(t->GetNumberOfSubTerms() > 0)
+	{
+		t = t->GetSubTerms().front();
+	}
+	return t;
+}
+
 void Manipulator::InsertDigit(int digit)
 {
 	Cursor* c = Cursor::GetActive();
 	assert(c != nullptr);
 	// Create the necessary object
-	if (c->GetLeft() == nullptr)
+	if (CursorLeft() == nullptr)
 	{
 		// Always create the parent first
 		Connect2* newParent = new Connect2(c->GetParent());
@@ -54,13 +135,12 @@ void Manipulator::InsertDigit(int digit)
 		Raw* newRaw = new Raw(newParent);
 		newParent->SetSub1(newRaw);
 		c->SetParent(newParent);
-		c->SetLeft(newRaw);
 		newParent->SetSub2(c);
 	}
 	// Add the actual digit
-	if (Term::IsType<Raw>(c->GetLeft()))
+	if (Term::IsType<Raw>(CursorLeft()))
 	{
-		dynamic_cast<Raw*>(c->GetLeft())->AppendRight(to_string(digit));
+		dynamic_cast<Raw*>(CursorLeft())->AppendRight(to_string(digit));
 	}
 	else
 	{
@@ -72,16 +152,16 @@ void Manipulator::InsertDigit(int digit)
 void Manipulator::CursorMoveLeft()
 {
 	Cursor* c = Cursor::GetActive();
-	if (c->GetLeft() == nullptr)
+	if (CursorLeft() == nullptr)
 		return;
-	if (Term::IsType<Raw>(c->GetLeft()))
+	if (Term::IsType<Raw>(CursorLeft()))
 	{
-		Raw* left = dynamic_cast<Raw*>(c->GetLeft());
+		Raw* left = dynamic_cast<Raw*>(CursorLeft());
 		string swap = left->Backspace();
 		// Add swap to the right
-		if (Term::IsType<Raw>(c->GetRight()))
+		if (Term::IsType<Raw>(CursorRight()))
 		{
-			Raw* right = dynamic_cast<Raw*>(c->GetRight());
+			Raw* right = dynamic_cast<Raw*>(CursorRight());
 			right->AppendLeft(swap);
 		}
 		else
@@ -101,7 +181,6 @@ void Manipulator::CursorMoveLeft()
 			Raw* right = new Raw(rightCo2);
 			rightCo2->SetSub2(right);
 			right->AppendLeft(swap);
-			c->SetRight(right);
 		}
 
 		if (left->IsEmpty())
@@ -111,9 +190,6 @@ void Manipulator::CursorMoveLeft()
 			Replace(parent, dynamic_cast<Term*>(c));
 			DeleteTerm(parent);
 			DeleteTerm(left);
-			c->SetLeft(nullptr);
-			//TODO
-			FindCursorNeighbours();
 		}
 	}
 }
@@ -121,12 +197,12 @@ void Manipulator::CursorMoveLeft()
 void Manipulator::CursorMoveRight()
 {
 	Cursor* c = Cursor::GetActive();
-	if (c->GetRight() == nullptr)
+	if (CursorRight() == nullptr)
 		return;
-	if (Term::IsType<Raw>(c->GetRight()))
+	if (Term::IsType<Raw>(CursorRight()))
 	{/*
 		TODO: first finish move left
-		Raw* raw = dynamic_cast<Raw*>(c->GetLeft());
+		Raw* raw = dynamic_cast<Raw*>(CursorLeft());
 		string swap = raw->Backspace();
 		// if raw becomes "empty"
 		if (raw->IsEmpty())
@@ -137,132 +213,44 @@ void Manipulator::CursorMoveRight()
 	}
 }
 
-void Manipulator::FindCursorNeighbours()
-{
-	Cursor* c = Cursor::GetActive();
-
-	// Find left Neighbour
-	Term* roof = c;
-
-	// Determine roof
-	while (1) // find the "roof" of the cursor, the first term in the line of parents, that has more than one child (which eventually leads to the cursor)
-	{
-		if (roof->GetParent() == nullptr)
-		{
-			assert(dynamic_cast<Term*>(roof) == root);
-			c->SetLeft(nullptr);
-			return;
-		}
-		roof = roof->GetParent();
-		if (roof->GetNumberOfSubTerms() > 1)
-		{
-			// Check if the additional Terms of that parent are left of the cursor
-			vector<Term*> roofSubs = roof->GetSubTerms();
-			vector<Term*>::iterator it = begin(roofSubs);
-			for (;it != end(roofSubs); it++)
-			{
-				if (*it == roof)
-					break;
-			}
-			 //vector<Term*>::iterator
-			if (*it != roofSubs.front() && it != end(roofSubs))
-			{
-				debugText += typeid(**(--it)).name();
-				c->SetLeft(GetRightmostTerm(*(--it)));
-				return;
-			}
-		}
-		else
-		{
-			assert(roof->GetNumberOfSubTerms() != 0);
-			// Step up one layer to find roof
-			roof = roof->GetParent();
-		}
-	}
-
-	roof = c;
-
-	// Determine roof
-	while (1) // find the "roof" of the cursor, the first term in the line of parents, that has more than one child (which eventually leads to the cursor)
-	{
-		if (roof->GetParent() == nullptr)
-		{
-			assert(dynamic_cast<Term*>(roof) == root);
-			c->SetRight(nullptr);
-			break;
-		}
-		roof = roof->GetParent();
-		if (roof->GetNumberOfSubTerms() > 1)
-		{
-			// Check if the additional Terms of that parent are right of the cursor
-			vector<Term*> roofSubs = roof->GetSubTerms();
-			vector<Term*>::iterator it = begin(roofSubs);
-			for (;it != end(roofSubs); it++)
-			{
-				if (*it == roof)
-					break;
-			}
-			 //vector<Term*>::iterator
-			if (*it != roofSubs.back() && it != end(roofSubs))
-			{
-				c->SetRight(GetLeftmostTerm(*(++it)));
-				break;
-			}
-		}
-		else
-		{
-			assert(roof->GetNumberOfSubTerms() != 0);
-			// Step up one layer to find roof
-			roof = roof->GetParent();
-		}
-	}
-}
-
-Term* Manipulator::GetRightmostTerm(Term* t)
-{
-	while(t->GetNumberOfSubTerms() > 0)
-	{
-		t = t->GetSubTerms().back();
-	}
-	return t;
-}
-
-Term* Manipulator::GetLeftmostTerm(Term* t)
-{
-	while(t->GetNumberOfSubTerms() > 0)
-	{
-		t = t->GetSubTerms().front();
-	}
-	return t;
-}
-
 void Manipulator::Backspace()
 {
-	Cursor* c = Cursor::GetActive();
-	if (c->GetLeft() == nullptr)
+	if (CursorLeft() == nullptr)
 		return;
-	if (Term::IsType<Raw>(c->GetLeft()))
+	if (Term::IsType<Raw>(CursorLeft()))
 	{
-		Raw* raw = dynamic_cast<Raw*>(c->GetLeft());
+		Raw* raw = dynamic_cast<Raw*>(CursorLeft());
 		raw->Backspace();
 		// if raw becomes "empty"
 		if (raw->IsEmpty())
 		{
-			Term* parent = c->GetParent();
-			assert(Term::IsType<Connect2>(parent));
-			Replace(parent, dynamic_cast<Term*>(c));
+			assert(Term::IsType<Connect2>(raw->GetParent()));
+			Connect2* parent = dynamic_cast<Connect2*>(raw->GetParent());
+			Replace(parent, parent->GetSub2());
 			DeleteTerm(parent);
 			DeleteTerm(raw);
-			c->SetLeft(nullptr);
-			//TODO
-			FindCursorNeighbours();
 		}
 	}
 }
 
 void Manipulator::Delete()
 {
-	throw (string)"Delete has not yet been implemented";
+	if (CursorRight() == nullptr)
+		return;
+	if (Term::IsType<Raw>(CursorRight()))
+	{
+		Raw* raw = dynamic_cast<Raw*>(CursorRight());
+		raw->Delete();
+		// if raw becomes "empty"
+		if (raw->IsEmpty())
+		{
+			assert(Term::IsType<Connect2>(raw->GetParent()));
+			Connect2* parent = dynamic_cast<Connect2*>(raw->GetParent());
+			Replace(parent, parent->GetSub1());
+			DeleteTerm(parent);
+			DeleteTerm(raw);
+		}
+	}
 }
 
 
@@ -314,13 +302,6 @@ bool Manipulator::CheckConnections(Term*& t)
 void Manipulator::DeleteTerm(Term* t)
 {
 	// Delete all possible variables pointing to it
-
-	// Pointer from Cursor
-	Cursor* c = Cursor::GetActive();
-	if (c->GetLeft() == t)
-		c->SetLeft(nullptr);
-	if (c->GetRight() == t)
-		c->SetRight(nullptr);
 	// Pointer from old children
 	vector<Term*> subTerms = t->GetSubTerms();
 	for (vector<Term*>::iterator it = subTerms.begin(); it != subTerms.end(); it++)

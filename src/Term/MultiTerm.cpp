@@ -18,7 +18,7 @@ vector<Term*> MultiTerm::GetSubTerms()
 	return subTerms;
 }
 
-int MultiTerm::Tree(StringTree& tree, int& maxDepth)
+int MultiTerm::Tree(StringTree& tree, int& maxDepth, bool withPtr)
 {
 	if (subTerms.size() > 0)
 	{
@@ -33,14 +33,15 @@ int MultiTerm::Tree(StringTree& tree, int& maxDepth)
 			maxDepth = max(maxDepth, subMaxDepth);
 		}
 		// Display label in the middle
-		int totalPadding = len - 2 - this->treeLabel.length();
+		int totalPadding = len - 2 - this->TreeLabel(withPtr).length();
+		assert(totalPadding >= 0);
 		int leftPadding = totalPadding / 2;
-		tree.s = "(" + string(leftPadding, ' ') + this->treeLabel + string(totalPadding - leftPadding, ' ') + ")";
+		tree.s = "(" + string(leftPadding, ' ') + this->TreeLabel(withPtr) + string(totalPadding - leftPadding, ' ') + ")";
 
 		maxDepth++; // Count this term itself
 		return len;
 	}
-	return Term::Tree(tree, maxDepth);
+	return Term::Tree(tree, maxDepth, withPtr);
 }
 
 void MultiTerm::ReplaceSubTerm(Term* newTerm, Term* oldTerm)

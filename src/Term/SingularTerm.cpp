@@ -38,6 +38,13 @@ void SingularTerm::ReplaceSubTerm(Term* oldTerm, Term* newTerm)
 	}
 }
 
+
+int SingularTerm::Tree(StringTree& tree, int& maxDepth, bool withPtr)
+{
+	//TODO
+	throw (string) "error";
+}
+
 size_t SingularTerm::GetNumberOfSubTerms()
 {
 	return 1;

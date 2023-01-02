@@ -46,7 +46,7 @@ private:
 
 	void PrintTermToConsole(Term*& t);
 	void PrintLatexToConsole(Term*& t);
-	int PrintTreeToConsole(Term*& t); // return maxDepth
+	int PrintTreeToConsole(Term*& t, bool withPtr=false); // return maxDepth
 	int Input(char& key); // return 3 to exit InteractiveInput, -1 to exit program, 1 if input is not readable, 0 otherwise
 	int Latex(Term*& t);
 	int InteractiveInput();

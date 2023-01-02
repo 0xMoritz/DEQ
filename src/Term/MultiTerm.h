@@ -19,7 +19,7 @@ public:
 	MultiTerm(Term* _parent);
 	virtual ~MultiTerm();
 	std::vector<Term*> GetSubTerms() override;
-	int Tree(StringTree& tree, int& maxDepth) override;
+	int Tree(StringTree& tree, int& maxDepth, bool withPtr=false) override;
 	void ReplaceSubTerm(Term* oldTerm, Term* newTerm) override;
 	size_t GetNumberOfSubTerms()	override;
 };

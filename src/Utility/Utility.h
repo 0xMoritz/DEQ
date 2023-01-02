@@ -12,3 +12,4 @@
 
 
 void Wait();
+void DebugLog(const std::string& s);

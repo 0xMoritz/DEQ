@@ -26,7 +26,6 @@ class Manipulator
 private:
 	Term* root;
 	void Replace(Term* oldTerm, Term* newTerm); // Sets new Parent of newTerm, and links this parent's subTerm to it, Deals with terms being root
-	void FindCursorNeighbours(); // Finds and sets Cursor.left and Cursor.right
 	Term* GetRightmostTerm(Term* t);
 	Term* GetLeftmostTerm(Term* t);
 	void DeleteTerm(Term* t);
@@ -43,4 +42,6 @@ public:
 	void CursorMoveLeft();
 	int Latex(Term*& t);
 	bool CheckConnections(Term*& t);
+	Term* CursorLeft();
+	Term* CursorRight();
 };

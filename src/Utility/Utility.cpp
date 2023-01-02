@@ -10,3 +10,8 @@ void Wait()
 	cin >> s;
 	cout << endl;
 }
+void DebugLog(const string& s)
+{
+	cout << s;
+	Wait();
+}

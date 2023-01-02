@@ -52,7 +52,7 @@ void BinaryTerm::SetSub2(Term* newSub2)
 	}
 }
 
-int BinaryTerm::Tree(StringTree& tree, int& maxDepth)
+int BinaryTerm::Tree(StringTree& tree, int& maxDepth, bool withPtr)
 {
 	int len = 0;
 	maxDepth = 0;
@@ -61,18 +61,19 @@ int BinaryTerm::Tree(StringTree& tree, int& maxDepth)
 
 	subTree = new StringTree{};
 	tree.subTrees.push_back(subTree);
-	len += sub1->Tree(*subTree, subMaxDepth);
+	len += sub1->Tree(*subTree, subMaxDepth, withPtr);
 	maxDepth = max(maxDepth, subMaxDepth);
 
 	subTree = new StringTree{};
 	tree.subTrees.push_back(subTree);
-	len += sub2->Tree(*subTree, subMaxDepth);
+	len += sub2->Tree(*subTree, subMaxDepth, withPtr);
 	maxDepth = max(maxDepth, subMaxDepth);
 
 	// Display label in the middle
-	int totalPadding = len - 2 - this->treeLabel.length();
+	int totalPadding = len - 2 - this->TreeLabel(withPtr).length();
+	assert(totalPadding >= 0);
 	int leftPadding = totalPadding / 2;
-	tree.s = "(" + string(leftPadding, ' ') + this->treeLabel + string(totalPadding - leftPadding, ' ') + ")";
+	tree.s = "(" + string(leftPadding, ' ') + this->TreeLabel(withPtr) + string(totalPadding - leftPadding, ' ') + ")";
 
 	maxDepth++; // Count this term itself
 	return len;
