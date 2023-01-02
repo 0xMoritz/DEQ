@@ -14,7 +14,6 @@
 class Empty : public AutonomousTerm
 {
 private:
-	std::string s;
 public:
 	Empty(Term* _parent);
 	std::string Tex() override;

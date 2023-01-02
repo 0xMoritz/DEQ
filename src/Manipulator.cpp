@@ -76,13 +76,44 @@ void Manipulator::CursorMoveLeft()
 		return;
 	if (Term::IsType<Raw>(c->GetLeft()))
 	{
-		Raw* raw = dynamic_cast<Raw*>(c->GetLeft());
-		string swap = raw->Backspace();
-		// if raw becomes "empty"
-		if (raw->IsEmpty())
+		Raw* left = dynamic_cast<Raw*>(c->GetLeft());
+		string swap = left->Backspace();
+		// Add swap to the right
+		if (Term::IsType<Raw>(c->GetRight()))
 		{
+			Raw* right = dynamic_cast<Raw*>(c->GetRight());
+			right->AppendLeft(swap);
+		}
+		else
+		{
+			// Construct a suspension such that
+			//             co2
+			//            /   |
+			//			co2  right
+			//         /   |
+			//      left  cursor
 			assert(Term::IsType<Connect2>(c->GetParent()));
-			///TODO, attention with the hirarchy...
+			Connect2* leftCo2 = dynamic_cast<Connect2*>(c->GetParent());
+			Connect2* rightCo2 = new Connect2(leftCo2->GetParent());
+			Replace(leftCo2, rightCo2);
+			rightCo2->SetSub1(leftCo2);
+
+			Raw* right = new Raw(rightCo2);
+			rightCo2->SetSub2(right);
+			right->AppendLeft(swap);
+			c->SetRight(right);
+		}
+
+		if (left->IsEmpty())
+		{
+			Term* parent = c->GetParent();
+			assert(Term::IsType<Connect2>(parent));
+			Replace(parent, dynamic_cast<Term*>(c));
+			DeleteTerm(parent);
+			DeleteTerm(left);
+			c->SetLeft(nullptr);
+			//TODO
+			FindCursorNeighbours();
 		}
 	}
 }
@@ -134,8 +165,9 @@ void Manipulator::FindCursorNeighbours()
 					break;
 			}
 			 //vector<Term*>::iterator
-			if (*it != roofSubs.front())
+			if (*it != roofSubs.front() && it != end(roofSubs))
 			{
+				debugText += typeid(**(--it)).name();
 				c->SetLeft(GetRightmostTerm(*(--it)));
 				return;
 			}
@@ -171,7 +203,7 @@ void Manipulator::FindCursorNeighbours()
 					break;
 			}
 			 //vector<Term*>::iterator
-			if (*it != roofSubs.front())
+			if (*it != roofSubs.back() && it != end(roofSubs))
 			{
 				c->SetRight(GetLeftmostTerm(*(++it)));
 				break;
@@ -219,8 +251,9 @@ void Manipulator::Backspace()
 			Term* parent = c->GetParent();
 			assert(Term::IsType<Connect2>(parent));
 			Replace(parent, dynamic_cast<Term*>(c));
-			delete parent;
-			delete raw;
+			DeleteTerm(parent);
+			DeleteTerm(raw);
+			c->SetLeft(nullptr);
 			//TODO
 			FindCursorNeighbours();
 		}
@@ -270,4 +303,41 @@ int Manipulator::Latex(Term*& t)
 	string openPDFCommand = "okular --unique " + printer.GetOutputPath() + "/" + "eq.pdf &";
 	cout << "okular returned" << system(openPDFCommand.c_str()) << endl << endl;
 	return 0;
+}
+
+bool Manipulator::CheckConnections(Term*& t)
+{
+	//error
+}
+
+
+void Manipulator::DeleteTerm(Term* t)
+{
+	// Delete all possible variables pointing to it
+
+	// Pointer from Cursor
+	Cursor* c = Cursor::GetActive();
+	if (c->GetLeft() == t)
+		c->SetLeft(nullptr);
+	if (c->GetRight() == t)
+		c->SetRight(nullptr);
+	// Pointer from old children
+	vector<Term*> subTerms = t->GetSubTerms();
+	for (vector<Term*>::iterator it = subTerms.begin(); it != subTerms.end(); it++)
+	{
+		if ((*it)->GetParent() == t)
+			(*it)->SetParent(nullptr);
+	}
+	// Pointer from parent
+	if (t->GetParent() != nullptr)
+		t->GetParent()->ReplaceSubTerm(t, nullptr);
+	// Pointer from root
+	if (root == t)
+		root = nullptr;
+}
+
+void Manipulator::DeleteSubTerms(Term* t)
+{
+	// Delete whole subTree, could be dangerous
+	//error
 }

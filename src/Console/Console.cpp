@@ -57,17 +57,17 @@ int Console::Input(char& key) // return 3 to exit InteractiveInput, -1 to exit p
 				if (read(STDIN_FILENO, &key, 1) == 1)
 				{
 					if (key == KEY_UP)
-						PressUpArrow();
+						return PressUpArrow();
 					else if (key == KEY_RIGHT)
-						PressRightArrow();
+						return PressRightArrow();
 					else if (key == KEY_LEFT)
-						PressLeftArrow();
+						return PressLeftArrow();
 					else if (key == KEY_DOWN)
-						PressDownArrow();
+						return PressDownArrow();
 					else if (key == KEY_POS1)
-						PressPos1();
+						return PressPos1();
 					else if (key == KEY_END)
-						PressEnd();
+						return PressEnd();
 					else
 						return 1;
 				}
@@ -127,7 +127,7 @@ int Console::Input(char& key) // return 3 to exit InteractiveInput, -1 to exit p
 			throw ((string)"Illegal input: " + to_string(static_cast<int>(key)));
 		}
 	}
-	return key;
+	return 1;
 }
 
 // Interactive equation with instant feedback

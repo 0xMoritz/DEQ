@@ -28,7 +28,8 @@ void SingularTerm::ReplaceSubTerm(Term* oldTerm, Term* newTerm)
 	if (oldTerm == sub)
 	{
 		oldTerm->SetParent(nullptr);
-		newTerm->SetParent(this);
+		if (newTerm != nullptr)
+			newTerm->SetParent(this);
 		sub = newTerm;
 	}
 	else

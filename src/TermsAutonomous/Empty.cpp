@@ -7,13 +7,13 @@ using namespace std;
 
 Empty::Empty(Term* _parent) : AutonomousTerm(_parent)
 {
-	treeLabel = "0";
+	treeLabel = "?";
 }
 string Empty::Print()
 {
-	return s;
+	return "?";
 }
 string Empty::Tex()
 {
-	return s;
+	return "?";
 }

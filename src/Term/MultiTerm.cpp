@@ -48,7 +48,8 @@ void MultiTerm::ReplaceSubTerm(Term* newTerm, Term* oldTerm)
 	if (subTerms.size() > 0)
 	{
 		oldTerm->SetParent(nullptr);
-		newTerm->SetParent(this);
+		if (newTerm != nullptr)
+			newTerm->SetParent(this);
 
 		for (ITERATOR subTerm = subTerms.begin(); subTerm != subTerms.end(); subTerm++)
 		{

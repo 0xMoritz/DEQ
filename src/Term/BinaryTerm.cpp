@@ -32,6 +32,10 @@ Term* BinaryTerm::GetSub1()
 void BinaryTerm::SetSub1(Term* newSub1)
 {
 	sub1 = newSub1;
+	if (sub1 != nullptr)
+	{
+		sub1->SetParent(this);
+	}
 }
 
 Term* BinaryTerm::GetSub2()
@@ -42,6 +46,10 @@ Term* BinaryTerm::GetSub2()
 void BinaryTerm::SetSub2(Term* newSub2)
 {
 	sub2 = newSub2;
+	if (sub2 != nullptr)
+	{
+		sub2->SetParent(this);
+	}
 }
 
 int BinaryTerm::Tree(StringTree& tree, int& maxDepth)
@@ -73,7 +81,8 @@ int BinaryTerm::Tree(StringTree& tree, int& maxDepth)
 void BinaryTerm::ReplaceSubTerm(Term* oldTerm, Term* newTerm)
 {
 	oldTerm->SetParent(nullptr);
-	newTerm->SetParent(this);
+	if (newTerm != nullptr)
+		newTerm->SetParent(this);
 
 	if (sub1 == oldTerm)
 	{
