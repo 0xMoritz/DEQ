@@ -1,6 +1,7 @@
 #include "Addition.h"
 
 using namespace std;
+using ITERATOR = vector<Term*>::iterator;
 
 // class Addition
 
@@ -18,7 +19,7 @@ string Addition::Print()
 	if (subTerms.size() > 0)
 	{
 		s += subTerms.front()->Print();
-		for (auto summand = ++subTerms.begin(); summand != subTerms.end(); summand++)
+		for (ITERATOR summand = ++subTerms.begin(); summand != subTerms.end(); summand++)
 		{
 			assert(*summand!=nullptr);
 			s += " + " + (**summand).Print();
@@ -33,7 +34,7 @@ string Addition::Tex()
 	if (subTerms.size() > 0)
 	{
 		s += subTerms.front()->GetTex();
-		for (auto summand = ++subTerms.begin(); summand != subTerms.end(); summand++)
+		for (ITERATOR summand = ++subTerms.begin(); summand != subTerms.end(); summand++)
 		{
 			assert(*summand!=nullptr);
 			s += " + " + (**summand).GetTex();

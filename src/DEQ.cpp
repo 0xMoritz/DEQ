@@ -11,6 +11,13 @@ Cursor* Cursor::activeCursor = nullptr;
 
 int main(int argc, char **argv)
 {
+	// Learn about pointers:
+	//Term* a = new Cursor(nullptr);
+	//cout << "typeid: " << typeid(a).name() << ", typeid(a)==typeid(Term*):" << (typeid(a) == typeid(Term*)) << ", typeid(a)==typeid(Cursor*):" << (typeid(a) == typeid(Cursor*)) << ", Termptr: " << (dynamic_cast<Term*>(a)) << ", Cursorptr: " << dynamic_cast<Cursor*>(a) << ", Rawptr" << dynamic_cast<Raw*>(a) << ", nullptr";// << nullptr;
+
+
+
+
 	Manipulator manip;
 	Console console(manip);
 	console.ShellLoop();

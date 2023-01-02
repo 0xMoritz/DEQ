@@ -19,7 +19,8 @@ public:
 	~Raw();
 	std::string Tex() override;
 	std::string Print() override;
-	void Append(std::string s);
+	void AppendRight(std::string s);
+	void AppendLeft(std::string s);
 	std::string Backspace(); // Deletion from right, why not return char? Maybe I want to have certain more complicated structures like a subscript
 	std::string Delete(); // Deletion from left
 	bool IsEmpty();

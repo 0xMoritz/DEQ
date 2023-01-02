@@ -17,8 +17,6 @@ class Term
 protected:
 	Term* parent;
 	std::string treeLabel = "err";
-
-
 	static std::string PtrAddress(Term* ptr);
 public:
 	//~Term() = default;
@@ -37,4 +35,12 @@ public:
 	virtual size_t GetNumberOfSubTerms();
 
 	static Term* WithoutCursor(Term* t);
+
+	template<typename T> static bool IsType(const Term* t)
+	{
+		// Comparing the pointers will always output typeid(t)=typeid(Term*), by dereferencing it we force the most derived type on t and can compare.
+		return typeid(*t) == typeid(T);
+		// This also works I think:
+		//return (dynamic_cast<T*>(t) != nullptr);
+	};
 };

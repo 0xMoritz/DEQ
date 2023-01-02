@@ -33,9 +33,13 @@ string Raw::Tex()
 {
 	return text;
 }
-void Raw::Append(string s)
+void Raw::AppendRight(string s)
 {
 	text += s;
+}
+void Raw::AppendLeft(string s)
+{
+	text = s + text;
 }
 std::string Raw::Backspace()
 {

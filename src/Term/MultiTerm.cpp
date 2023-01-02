@@ -1,6 +1,7 @@
 #include "MultiTerm.h"
 
 using namespace std;
+using ITERATOR = vector<Term*>::iterator;
 
 // class MultiTerm
 MultiTerm::MultiTerm(Term* _parent) : Term(_parent)
@@ -23,7 +24,7 @@ int MultiTerm::Tree(StringTree& tree, int& maxDepth)
 	{
 		int len = 0;
 		maxDepth = 0;
-		for (auto subTerm = subTerms.begin(); subTerm != subTerms.end(); subTerm++)
+		for (ITERATOR subTerm = subTerms.begin(); subTerm != subTerms.end(); subTerm++)
 		{
 			int subMaxDepth = 0;
 			StringTree* subTree = new StringTree{};
@@ -49,7 +50,7 @@ void MultiTerm::ReplaceSubTerm(Term* newTerm, Term* oldTerm)
 		oldTerm->SetParent(nullptr);
 		newTerm->SetParent(this);
 
-		for (auto subTerm = subTerms.begin(); subTerm != subTerms.end(); subTerm++)
+		for (ITERATOR subTerm = subTerms.begin(); subTerm != subTerms.end(); subTerm++)
 		{
 			if (oldTerm == *subTerm)
 			{

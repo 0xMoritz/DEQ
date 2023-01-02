@@ -58,9 +58,9 @@ void Manipulator::InsertDigit(int digit)
 		newParent->SetSub2(c);
 	}
 	// Add the actual digit
-	if (typeid(*c->GetLeft()) == typeid(Raw))
+	if (Term::IsType<Raw>(c->GetLeft()))
 	{
-		dynamic_cast<Raw*>(c->GetLeft())->Append(to_string(digit));
+		dynamic_cast<Raw*>(c->GetLeft())->AppendRight(to_string(digit));
 	}
 	else
 	{
@@ -74,15 +74,14 @@ void Manipulator::CursorMoveLeft()
 	Cursor* c = Cursor::GetActive();
 	if (c->GetLeft() == nullptr)
 		return;
-	if (typeid(*c->GetLeft()) == typeid(Raw))
+	if (Term::IsType<Raw>(c->GetLeft()))
 	{
 		Raw* raw = dynamic_cast<Raw*>(c->GetLeft());
 		string swap = raw->Backspace();
 		// if raw becomes "empty"
 		if (raw->IsEmpty())
 		{
-			//TODO: implement a replace method.
-			assert(typeid(*c->GetParent()) == typeid(Connect2));
+			assert(Term::IsType<Connect2>(c->GetParent()));
 			///TODO, attention with the hirarchy...
 		}
 	}
@@ -93,15 +92,15 @@ void Manipulator::CursorMoveRight()
 	Cursor* c = Cursor::GetActive();
 	if (c->GetRight() == nullptr)
 		return;
-	if (typeid(*c->GetRight()) == typeid(Raw))
+	if (Term::IsType<Raw>(c->GetRight()))
 	{/*
+		TODO: first finish move left
 		Raw* raw = dynamic_cast<Raw*>(c->GetLeft());
 		string swap = raw->Backspace();
 		// if raw becomes "empty"
 		if (raw->IsEmpty())
 		{
 			//TODO: implement a replace method.
-			assert(typeid(*c->GetParent()) == typeid(Connect2));
 			///TODO, attention with the hirarchy...
 		}*/
 	}
@@ -128,7 +127,7 @@ void Manipulator::FindCursorNeighbours()
 		{
 			// Check if the additional Terms of that parent are left of the cursor
 			vector<Term*> roofSubs = roof->GetSubTerms();
-			auto it = begin(roofSubs);
+			vector<Term*>::iterator it = begin(roofSubs);
 			for (;it != end(roofSubs); it++)
 			{
 				if (*it == roof)
@@ -165,7 +164,7 @@ void Manipulator::FindCursorNeighbours()
 		{
 			// Check if the additional Terms of that parent are right of the cursor
 			vector<Term*> roofSubs = roof->GetSubTerms();
-			auto it = begin(roofSubs);
+			vector<Term*>::iterator it = begin(roofSubs);
 			for (;it != end(roofSubs); it++)
 			{
 				if (*it == roof)
@@ -210,7 +209,7 @@ void Manipulator::Backspace()
 	Cursor* c = Cursor::GetActive();
 	if (c->GetLeft() == nullptr)
 		return;
-	if (typeid(*c->GetLeft()) == typeid(Raw))
+	if (Term::IsType<Raw>(c->GetLeft()))
 	{
 		Raw* raw = dynamic_cast<Raw*>(c->GetLeft());
 		raw->Backspace();
@@ -218,7 +217,7 @@ void Manipulator::Backspace()
 		if (raw->IsEmpty())
 		{
 			Term* parent = c->GetParent();
-			assert(typeid(*parent) == typeid(Connect2));
+			assert(Term::IsType<Connect2>(parent));
 			Replace(parent, dynamic_cast<Term*>(c));
 			delete parent;
 			delete raw;

@@ -1,6 +1,7 @@
 #include "Multiplication.h"
 
 using namespace std;
+using ITERATOR = vector<Term*>::iterator;
 
 
 Multiplication::Multiplication(Term* _parent) : MultiTerm(_parent)
@@ -17,10 +18,10 @@ string Multiplication::Print()
 	if (subTerms.size() > 0)
 	{
 		s += subTerms.front()->Print();
-		for (auto factor = ++subTerms.begin(); factor != subTerms.end(); factor++)
+		for (ITERATOR factor = ++subTerms.begin(); factor != subTerms.end(); factor++)
 		{
 			assert(*factor!=nullptr);
-			if (typeid(**factor) == typeid(Raw))
+			if (Term::IsType<Raw>(*factor))
 			{
 				s+= "×";
 			}
@@ -36,10 +37,10 @@ string Multiplication::Tex()
 	if (subTerms.size() > 0)
 	{
 		s += subTerms.front()->GetTex();
-		for (auto factor = ++subTerms.begin(); factor != subTerms.end(); factor++)
+		for (ITERATOR factor = ++subTerms.begin(); factor != subTerms.end(); factor++)
 		{
 			assert(*factor!=nullptr);
-			if (typeid(**factor) == typeid(Raw))
+			if (Term::IsType<Raw>(*factor))
 			{
 				s+= "\\times";
 			}

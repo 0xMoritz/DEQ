@@ -1,10 +1,11 @@
 #include "StringTree.h"
 
 using namespace std;
+using ITERATOR = vector<StringTree*>::iterator;
 
 StringTree::~StringTree()
 {
-	for (vector<StringTree*>::iterator subTree = subTrees.begin(); subTree != subTrees.end(); subTree++)
+	for (ITERATOR subTree = subTrees.begin(); subTree != subTrees.end(); subTree++)
 	{
 		delete *subTree;
 	}
@@ -19,7 +20,7 @@ string StringTree::Write(int depth)
 	for (int i=1; i<depth; i++)
 	{
 		layers[i] = new vector<StringTree*>{};
-		for (vector<StringTree*>::iterator tree = layers[i-1]->begin(); tree != layers[i-1]->end(); tree++)
+		for (ITERATOR tree = layers[i-1]->begin(); tree != layers[i-1]->end(); tree++)
 		{
 			// Normalize, such that all the parts have the same depth, i.e. if there are no subtrees,
 			// add an empty element that contains an empty string to sustain width of output.
@@ -30,7 +31,7 @@ string StringTree::Write(int depth)
 				empty->s = string((**tree).s.length(), ' ');
 				layers[i]->push_back(empty);
 			}
-			for (vector<StringTree*>::iterator subTree = (**tree).subTrees.begin(); subTree != (**tree).subTrees.end(); subTree++)
+			for (ITERATOR subTree = (**tree).subTrees.begin(); subTree != (**tree).subTrees.end(); subTree++)
 			{
 				layers[i]->push_back(*subTree);
 			}
@@ -41,7 +42,7 @@ string StringTree::Write(int depth)
 	string out = "";
 	for (int i=0; i<depth; i++)
 	{
-		for (vector<StringTree*>::iterator tree = layers[i]->begin(); tree != layers[i]->end(); tree++)
+		for (ITERATOR tree = layers[i]->begin(); tree != layers[i]->end(); tree++)
 		{
 			out += (**tree).s;
 		}
@@ -53,7 +54,7 @@ string StringTree::Write(int depth)
 		delete layers[i];
 	}
 	// delete Empty StringTrees
-	for (vector<StringTree*>::iterator empty = emptyStringTrees.begin(); empty != emptyStringTrees.end(); empty++)
+	for (ITERATOR empty = emptyStringTrees.begin(); empty != emptyStringTrees.end(); empty++)
 	{
 		delete *empty;
 	}
