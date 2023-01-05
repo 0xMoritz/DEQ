@@ -14,8 +14,6 @@
 
 class Connection : public MultiTerm
 {
-private:
-	std::vector<Term*>::iterator Find(Term* t);
 public:
 	Connection(Term* _parent);
 	std::string Tex() override;
