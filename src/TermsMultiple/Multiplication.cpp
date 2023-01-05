@@ -8,9 +8,10 @@ Multiplication::Multiplication(Term* _parent) : MultiTerm(_parent)
 {
 	treeLabel = "mul";
 }
-void Multiplication::Append(Term* t, char symbol)
+void Multiplication::AppendRight(Term* t, char symbol)
 {
 	subTerms.push_back(t);
+	t->SetParent(this);
 	symbols.push_back(symbol);
 }
 string Multiplication::Print()
@@ -24,6 +25,8 @@ string Multiplication::Print()
 			assert(*factor!=nullptr);
 			if (*symbol == '*')
 				s += " × ";
+			else if (*symbol != ' ')
+				throw (string)"Illegal multiplication symbol: '" + string(1, *symbol) + "'";
 			s += (**factor).Print();
 		}
 		return s;
@@ -41,6 +44,8 @@ string Multiplication::Tex()
 			assert(*factor!=nullptr);
 			if (*symbol == '*')
 				s += "\\times";
+			else if (*symbol != ' ')
+				throw (string)"Illegal multiplication symbol: '" + string(1, *symbol) + "'";
 			s += (**factor).GetTex();
 		}
 		return s;

@@ -18,6 +18,17 @@ vector<Term*> MultiTerm::GetSubTerms()
 	return subTerms;
 }
 
+vector<Term*>::iterator MultiTerm::Find(Term* t)
+{
+	ITERATOR it = subTerms.begin();
+	for (; it != subTerms.end(); it++)
+	{
+		if (*it == t)
+			return it;
+	}
+	throw (string)"Term not Found.";
+}
+
 int MultiTerm::Tree(StringTree& tree, int& maxDepth, bool withPtr)
 {
 	if (subTerms.size() > 0)
@@ -29,7 +40,7 @@ int MultiTerm::Tree(StringTree& tree, int& maxDepth, bool withPtr)
 			int subMaxDepth = 0;
 			StringTree* subTree = new StringTree{};
 			tree.subTrees.push_back(subTree);
-			len += (**subTerm).Tree(*subTree, subMaxDepth);
+			len += (**subTerm).Tree(*subTree, subMaxDepth, withPtr);
 			maxDepth = max(maxDepth, subMaxDepth);
 		}
 		// Display label in the middle
@@ -44,7 +55,7 @@ int MultiTerm::Tree(StringTree& tree, int& maxDepth, bool withPtr)
 	return Term::Tree(tree, maxDepth, withPtr);
 }
 
-void MultiTerm::ReplaceSubTerm(Term* newTerm, Term* oldTerm)
+bool MultiTerm::ReplaceSubTerm(Term* oldTerm, Term* newTerm)
 {
 	if (subTerms.size() > 0)
 	{
@@ -57,11 +68,11 @@ void MultiTerm::ReplaceSubTerm(Term* newTerm, Term* oldTerm)
 			if (oldTerm == *subTerm)
 			{
 				*subTerm = newTerm;
-				return;
+				return 1;
 			}
 		}
-		throw (string)"Replace method was called in MultiTerm " + PtrAddress(this) + " but Term to replace couldn't be found";
 	}
+	return 0;
 }
 
 size_t MultiTerm::GetNumberOfSubTerms()

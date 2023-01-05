@@ -79,7 +79,7 @@ int BinaryTerm::Tree(StringTree& tree, int& maxDepth, bool withPtr)
 	return len;
 }
 
-void BinaryTerm::ReplaceSubTerm(Term* oldTerm, Term* newTerm)
+bool BinaryTerm::ReplaceSubTerm(Term* oldTerm, Term* newTerm)
 {
 	oldTerm->SetParent(nullptr);
 	if (newTerm != nullptr)
@@ -88,14 +88,16 @@ void BinaryTerm::ReplaceSubTerm(Term* oldTerm, Term* newTerm)
 	if (sub1 == oldTerm)
 	{
 		sub1 = newTerm;
+		return 1;
 	}
 	else if (sub2 == oldTerm)
 	{
 		sub2 = newTerm;
+		return 1;
 	}
 	else
 	{
-		throw (string)"Replace method was called in BinaryTerm " + PtrAddress(this) + " but Term to replace couldn't be found";
+		return 0;
 	}
 }
 

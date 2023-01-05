@@ -19,6 +19,7 @@ string Cursor::Tex()
 }
 Cursor* Cursor::GetActive()
 {
+	assert(activeCursor!=nullptr);
 	return activeCursor;
 }
 void Cursor::SetActive(Cursor* newActive)

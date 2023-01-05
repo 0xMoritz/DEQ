@@ -5,7 +5,7 @@ using namespace std;
 
 Manipulator::Manipulator()
 {
-	root = new Cursor(nullptr);
+	root = new Cursor(rootParent);
 	Cursor::SetActive(dynamic_cast<Cursor*>(root));
 }
 
@@ -15,12 +15,18 @@ void Manipulator::Replace(Term* oldTerm, Term* newTerm)
 	// assert(dynamic_cast<AutonomousTerm*>(oldTerm) != nullptr);
 	assert(oldTerm != nullptr);
 	assert(newTerm != nullptr);
-	if (oldTerm->GetParent() == nullptr) // == root
+	if (oldTerm == rootParent) // trying to insert beyond root -> shift root
+	{
+		root = newTerm;
+		newTerm->SetParent(rootParent);
+		debugText += "Replaced Root (beyond).";
+	}
+	else if (oldTerm->GetParent() == rootParent) // oldTerm == root
 	{
 		assert(oldTerm == root);
 		root = newTerm;
-		newTerm->SetParent(nullptr);
-		//debugText += "replaced Root with cursor";
+		newTerm->SetParent(rootParent);
+		debugText += "Replaced Root.";
 	}
 	else
 	{
@@ -45,7 +51,7 @@ Term* Manipulator::CursorLeft()
 	Term* oldRoof = roof;
 	while (1) // find the "roof" of the cursor, the first term in the line of parents, that has more than one child (which eventually leads to the cursor)
 	{
-		if (roof->GetParent() == nullptr)
+		if (roof->GetParent() == rootParent)
 		{
 			assert(dynamic_cast<Term*>(roof) == root);
 			return nullptr;
@@ -74,7 +80,7 @@ Term* Manipulator::CursorRight()
 	Term* oldRoof = roof;
 	while (1) // find the "roof" of the cursor, the first term in the line of parents, that has more than one child (which eventually leads to the cursor)
 	{
-		if (roof->GetParent() == nullptr)
+		if (roof->GetParent() == rootParent)
 		{
 			assert(dynamic_cast<Term*>(roof) == root);
 			return nullptr;
@@ -121,25 +127,21 @@ Term* Manipulator::GetLeftmostTerm(Term* t)
 void Manipulator::InsertDigit(int digit)
 {
 	Cursor* c = Cursor::GetActive();
-	assert(c != nullptr);
 	// Create the necessary object
 	if (CursorLeft() == nullptr)
 	{
-		// Always create the parent first
-		Connect2* newParent = new Connect2(c->GetParent());
-		if (c->GetParent() == nullptr)// Create new parent element, if the cursors parent is nullptr, than this will simply be handed over, however than we'll have to change the base Term element t
+		Connection* connect;
+		if (0==Term::IsType<Connection>(c->GetParent()))
 		{
-			assert(root==c);
-			root = static_cast<Term*>(newParent);
+			connect = new Connection(c->GetParent());
+			Replace(c, connect);
+			connect->AppendRight(c); // c will be the only subTerm anyway
 		}
 		else
-		{
-			Replace(c, newParent);
-		}
-		Raw* newRaw = new Raw(newParent);
-		newParent->SetSub1(newRaw);
-		c->SetParent(newParent);
-		newParent->SetSub2(c);
+			connect = dynamic_cast<Connection*>(c->GetParent());
+
+		Raw* newRaw = new Raw(connect);
+		connect->InsertSubTerm(c, newRaw, 0);
 	}
 	// Add the actual digit
 	if (Term::IsType<Raw>(CursorLeft()))
@@ -150,7 +152,47 @@ void Manipulator::InsertDigit(int digit)
 	{
 		throw (string)"Could not add digit";
 	}
+}
 
+void Manipulator::InsertAddition(char sign)
+{
+	/*Cursor* c = Cursor::GetActive();
+	Term* parentUp1 = c->GetParent();
+	if (Term::IsType<Connect2>(parentUp1))
+	{
+		Term* parentUp2 = parentUp1->GetParent();
+		if (Term::IsType<Connect2>(parentUp2))
+		{
+			// Construction is:
+			//       co2(up2)             co2(up2)
+			//       /    |               /      |
+			//      ?  co2(up1)    or    ?    co2(up1)
+			//        /       |              /      |
+			//     cursor     ?              ?     cursor
+			Term* right = CursorRight();
+			Term* left = CursorLeft();
+			if (Term::IsType<Raw>(left) && Term::IsType<Raw>(right))
+			{
+				Addition* add = new Addition(parentUp2->GetParent());
+				Replace(parentUp2, add);
+				add->AppendRight(left, ' ');
+				Connect2* newCo2 = new Connect2(add);
+				add->AppendRight(newCo2, sign);
+				newCo2->SetSub1(c);
+				c->SetParent(newCo2);
+				newCo2->SetSub2(right);
+				right->SetParent(newCo2);
+				DeleteTerm(parentUp1);
+				DeleteTerm(parentUp2);
+			}
+			else
+				throw (string) "Undefined case while inserting Addition";
+		}
+		else
+			throw (string) "Undefined case while inserting Addition";
+	}
+	else
+		throw (string) "Undefined case while inserting Addition";*/
 }
 
 void Manipulator::CursorMoveLeft()
@@ -158,90 +200,72 @@ void Manipulator::CursorMoveLeft()
 	Cursor* c = Cursor::GetActive();
 	if (CursorLeft() == nullptr)
 		return;
-	if (Term::IsType<Raw>(CursorLeft())) // Left already has a Raw type
+	if (Term::IsType<Connection>(c->GetParent()))
 	{
-		Raw* left = dynamic_cast<Raw*>(CursorLeft());
-		string swap = left->Backspace();
-		// Add swap to the right
-		if (Term::IsType<Raw>(CursorRight()))
+		Connection* connect = dynamic_cast<Connection*>(c->GetParent());
+		if (Term::IsType<Raw>(CursorLeft())) // Left already has a Raw type
 		{
-			Raw* right = dynamic_cast<Raw*>(CursorRight());
-			right->AppendLeft(swap);
+			Raw* left = dynamic_cast<Raw*>(CursorLeft());
+			string swap = left->BackspaceContent();
+			Term* right = CursorRight();
+			// If there is no Raw Term to the right: create one
+			if (!Term::IsType<Raw>(right))
+			{
+				right = new Raw(connect);
+				connect->InsertSubTerm(c, right, +1); // Insert sets parent of right
+			}
+			dynamic_cast<Raw*>(right)->AppendLeft(swap);
+			// Add swap to the right
+
+			if (left->IsEmpty())
+			{
+				assert(left->GetParent() == connect);
+				connect->RemoveSubTerm(left);
+				DeleteTerm(left);
+			}
 		}
 		else
-		{
-			// Construct a suspension such that
-			//             co2
-			//            /   |
-			//			co2  right
-			//         /   |
-			//      left  cursor
-			assert(Term::IsType<Connect2>(c->GetParent()));
-			Connect2* directCo2 = dynamic_cast<Connect2*>(c->GetParent());
-			Connect2* indirectCo2 = new Connect2(directCo2->GetParent());
-			Replace(directCo2, indirectCo2);
-			indirectCo2->SetSub1(directCo2);
-
-			Raw* right = new Raw(indirectCo2);
-			indirectCo2->SetSub2(right);
-			right->AppendLeft(swap);
-		}
-
-		if (left->IsEmpty())
-		{
-			Term* parent = left->GetParent();
-			assert(Term::IsType<Connect2>(parent));
-			Replace(parent, dynamic_cast<Connect2*>(parent)->GetSub2());
-			DeleteTerm(parent);
-			DeleteTerm(left);
-		}
+			throw (string)"Not yet implemented";
 	}
+	else
+		throw (string)"Not yet implemented";
 }
 
 void Manipulator::CursorMoveRight()
 {
-	// Analogous to moveLeft I hope
+	// Analogous to CursorMoveLeft - so far
 	Cursor* c = Cursor::GetActive();
 	if (CursorRight() == nullptr)
 		return;
-	if (Term::IsType<Raw>(CursorRight()))
+	if (Term::IsType<Connection>(c->GetParent()))
 	{
-		Raw* right = dynamic_cast<Raw*>(CursorRight());
-		string swap = right->Delete();
-		// Add swap to the right
-		if (Term::IsType<Raw>(CursorLeft())) // Right already has a Raw type
+		Connection* connect = dynamic_cast<Connection*>(c->GetParent());
+		if (Term::IsType<Raw>(CursorRight())) // Right already has a Raw type
 		{
-			Raw* left = dynamic_cast<Raw*>(CursorLeft());
-			left->AppendRight(swap);
+			Raw* right = dynamic_cast<Raw*>(CursorRight());
+			string swap = right->DelContent();
+			Term* left = CursorLeft();
+			// If there is no Raw Term to the left: create one
+			if (!Term::IsType<Raw>(left))
+			{
+				left = new Raw(connect);
+				connect->InsertSubTerm(c, left, 0); // Insert sets parent of left
+			}
+			dynamic_cast<Raw*>(left)->AppendRight(swap);
+			// Add swap to the right
+
+			if (right->IsEmpty())
+			{
+				assert(right->GetParent() == connect);
+				connect->RemoveSubTerm(right);
+				DeleteTerm(right);
+			}
 		}
 		else
-		{
-			// Construct a suspension such that
-			//             co2
-			//            /   |
-			//		   left  co2
-			//         		/   |
-			//          cursor right
-			assert(Term::IsType<Connect2>(c->GetParent()));
-			Connect2* directCo2 = dynamic_cast<Connect2*>(c->GetParent());
-			Connect2* indirectCo2 = new Connect2(directCo2->GetParent());
-			Replace(directCo2, indirectCo2);
-			indirectCo2->SetSub2(directCo2);
-
-			Raw* right = new Raw(indirectCo2);
-			indirectCo2->SetSub1(right);
-			right->AppendLeft(swap);
-		}
-
-		if (right->IsEmpty())
-		{
-			Term* parent = right->GetParent();
-			assert(Term::IsType<Connect2>(parent));
-			Replace(parent, dynamic_cast<Connect2*>(parent)->GetSub1());
-			DeleteTerm(parent);
-			DeleteTerm(right);
-		}
+			throw (string)"Not yet implemented";
 	}
+	else
+		throw (string)"Not yet implemented";
 }
 
 void Manipulator::Backspace()
@@ -251,36 +275,37 @@ void Manipulator::Backspace()
 	if (Term::IsType<Raw>(CursorLeft()))
 	{
 		Raw* raw = dynamic_cast<Raw*>(CursorLeft());
-		raw->Backspace();
-		// if raw becomes "empty"
+		raw->BackspaceContent();
 		if (raw->IsEmpty())
-		{
-			assert(Term::IsType<Connect2>(raw->GetParent()));
-			Connect2* parent = dynamic_cast<Connect2*>(raw->GetParent());
-			Replace(parent, parent->GetSub2());
-			DeleteTerm(parent);
-			DeleteTerm(raw);
-		}
+			RemoveEmptyRaw(raw);
 	}
 }
 
-void Manipulator::Delete()
+void Manipulator::Del()
 {
 	if (CursorRight() == nullptr)
 		return;
 	if (Term::IsType<Raw>(CursorRight()))
 	{
 		Raw* raw = dynamic_cast<Raw*>(CursorRight());
-		raw->Delete();
-		// if raw becomes "empty"
+		raw->DelContent();
 		if (raw->IsEmpty())
-		{
-			assert(Term::IsType<Connect2>(raw->GetParent()));
-			Connect2* parent = dynamic_cast<Connect2*>(raw->GetParent());
-			Replace(parent, parent->GetSub1());
-			DeleteTerm(parent);
-			DeleteTerm(raw);
-		}
+			RemoveEmptyRaw(raw);
+	}
+}
+
+void Manipulator::RemoveEmptyRaw(Raw* raw)
+{
+	assert(Term::IsType<Connection>(raw->GetParent()));
+	Connection* parent = dynamic_cast<Connection*>(raw->GetParent());
+	parent->RemoveSubTerm(raw);
+	DeleteTerm(raw);
+	if (parent->GetNumberOfSubTerms() <= 1) // Only remaining subTerm is Cursor
+	{
+		Term* c = Cursor::GetActive();
+		assert(parent->GetSubTerms().front() == c);
+		Replace(parent, c);
+		DeleteTerm(parent);
 	}
 }
 
@@ -324,15 +349,16 @@ int Manipulator::Latex(Term*& t)
 	return 0;
 }
 
-bool Manipulator::CheckConnections(Term*& t)
+bool Manipulator::CheckTermLinks(Term*& t)
 {
+	// Recursion
 	if (t == nullptr)
 	{
 		return 1;
 	}
 	else if (t == root)
 	{
-		if (t->GetParent() != nullptr)
+		if (t->GetParent() != rootParent)
 			return 1;
 	}
 	vector<Term*> subTerms = t->GetSubTerms();
@@ -342,7 +368,7 @@ bool Manipulator::CheckConnections(Term*& t)
 			return 1;
 		else if ((*it)->GetParent() != t)
 			return 1;
-		else if (CheckConnections(*it))
+		else if (CheckTermLinks(*it))
 			return 1;
 	}
 	return 0;
@@ -353,15 +379,18 @@ void Manipulator::DeleteTerm(Term* t)
 {
 	// Delete all possible variables pointing to it
 	// Pointer from old children
+	assert(t != nullptr);
 	vector<Term*> subTerms = t->GetSubTerms();
 	for (vector<Term*>::iterator it = subTerms.begin(); it != subTerms.end(); it++)
 	{
-		if ((*it)->GetParent() == t)
-			(*it)->SetParent(nullptr);
+		if (*it != nullptr)
+			if ((*it)->GetParent() == t)
+				(*it)->SetParent(nullptr);
 	}
 	// Pointer from parent
-	if (t->GetParent() != nullptr)
+	if (t->GetParent() != nullptr && t->GetParent() != rootParent)
 		t->GetParent()->ReplaceSubTerm(t, nullptr);
+
 	// Pointer from root
 	if (root == t)
 		root = nullptr;

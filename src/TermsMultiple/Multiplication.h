@@ -19,6 +19,6 @@ private:
 public:
 	Multiplication(Term* _parent);
 	std::string Tex() override;
-	void Append(Term* t, char symbol);
+	void AppendRight(Term* t, char symbol=' ');
 	std::string Print() override;
 };

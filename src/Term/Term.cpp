@@ -77,7 +77,7 @@ Term* Term::WithoutCursor(Term* t)
 	return t;//TODO
 }
 
-void Term::ReplaceSubTerm(Term* oldTerm, Term* newTerm)
+bool Term::ReplaceSubTerm(Term* oldTerm, Term* newTerm)
 {
 	throw (string)"Function Replace has been called on Term" + PtrAddress(this);
 }

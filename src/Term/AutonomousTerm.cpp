@@ -26,9 +26,9 @@ int AutonomousTerm::Tree(StringTree& tree, int& maxDepth, bool withPtr)
 	return TreeLabel(withPtr).length() + 2;
 }
 
-void AutonomousTerm::ReplaceSubTerm(Term* newTerm, Term* oldTerm)
+bool AutonomousTerm::ReplaceSubTerm(Term* newTerm, Term* oldTerm)
 {
-
+	return 0;
 }
 
 size_t AutonomousTerm::GetNumberOfSubTerms()

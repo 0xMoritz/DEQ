@@ -9,9 +9,10 @@ Addition::Addition(Term* _parent) : MultiTerm(_parent)
 {
 	treeLabel = "add";
 }
-void Addition::Append(Term* t, char sign)
+void Addition::AppendRight(Term* t, char sign)
 {
 	subTerms.push_back(t);
+	t->SetParent(this);
 	signs.push_back(sign);
 }
 string Addition::Print()

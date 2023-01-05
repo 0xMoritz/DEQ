@@ -20,7 +20,7 @@ public:
 	virtual ~SingularTerm();
 	std::vector<Term*> GetSubTerms() override;
 	Term* GetSubTerm();
-	void ReplaceSubTerm(Term* oldTerm, Term* newTerm) override;
+	bool ReplaceSubTerm(Term* oldTerm, Term* newTerm) override;
 	int Tree(StringTree& tree, int& maxDepth, bool withPtr=false);
 	size_t GetNumberOfSubTerms() override;
 };

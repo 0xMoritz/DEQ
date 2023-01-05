@@ -100,7 +100,7 @@ int Console::Input(char& key) // return 3 to exit InteractiveInput, -1 to exit p
 		else if (key == KEY_BACKSPACE)
 			return PressBackspace();
 		else if (key == KEY_DELETE)
-			return PressDelete();
+			return PressDel();
 		else if (KEY_NUMBER_START <= key && key <= KEY_NUMBER_END)
 			return PressNumber(key-KEY_NUMBER_START);
 		else if ((KEYS_LOWER_CASE_LETTERS_START <= key && key <= KEYS_LOWER_CASE_LETTERS_END)
@@ -175,7 +175,7 @@ int Console::InteractiveInput()
 				cout << "\b"; // Bring back cursor with \b
 
 				// CheckConnections
-				bool areThereErrors = manip.CheckConnections(manip.GetRoot());
+				bool areThereErrors = manip.CheckTermLinks(manip.GetRoot());
 				if (areThereErrors)
 					manip.debugText += "[Error] Connection Check. ";
 
@@ -320,19 +320,19 @@ int Console::PressBackspace()
 	manip.Backspace();
 	return 0;
 }
-int Console::PressDelete()
+int Console::PressDel()
 {
-	manip.Delete();
+	manip.Del();
 	return 0;
 }
 int Console::PressPlus()
 {
-	throw (string)"No Action set for '+'";
+	manip.InsertAddition('+');
 	return 0;
 }
 int Console::PressMinus()
 {
-	throw (string)"No Action set for '-'";
+	manip.InsertAddition('-');
 	return 0;
 }
 int Console::PressKomma()

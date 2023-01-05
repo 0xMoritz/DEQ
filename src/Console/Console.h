@@ -62,7 +62,7 @@ private:
 	int PressEnter();
 	int PressTab();
 	int PressBackspace();
-	int PressDelete();
+	int PressDel();
 	int PressPlus();
 	int PressMinus();
 	int PressKomma();

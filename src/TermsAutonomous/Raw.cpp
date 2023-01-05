@@ -41,14 +41,14 @@ void Raw::AppendLeft(string s)
 {
 	text = s + text;
 }
-std::string Raw::Backspace()
+std::string Raw::BackspaceContent()
 {
 	assert(text.length() > 0); // This case should be filtered by isEmpty checks
 	string deleted = text.substr(text.length()-1, 1);
 	text = text.substr(0, text.length()-1);
 	return deleted;
 }
-std::string Raw::Delete()
+std::string Raw::DelContent()
 {
 	assert(text.length() > 0); // This case should be filtered by isEmpty checks
 	string deleted = text.substr(0, 1);
