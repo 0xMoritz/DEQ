@@ -4,14 +4,15 @@ using namespace std;
 using ITERATOR = vector<Term*>::iterator;
 
 
-Connection::Connection(Term* _parent) : MultiTerm(_parent)
+Connection::Connection(Term* _parent)
+: MultiTerm(_parent)
 {
 	treeLabel = "con";
 }
-void Connection::AppendRight(Term* t)
+Connection::Connection(Term* _parent, vector<Term*> _subTerms, vector<char> _symbols)
+: MultiTerm(_parent, _subTerms, _symbols)
 {
-	subTerms.push_back(t);
-	t->SetParent(this);
+	treeLabel = "con";
 }
 string Connection::Print()
 {
@@ -41,7 +42,7 @@ string Connection::Tex()
 	}
 	return "";
 }
-
+/*
 void Connection::InsertSubTerm(Term* relativeToTerm, Term* newTerm, int relativeIndex)
 {
 	ITERATOR at = MultiTerm::Find(relativeToTerm);
@@ -57,4 +58,4 @@ void Connection::InsertSubTerm(Term* relativeToTerm, Term* newTerm, int relative
 void Connection::RemoveSubTerm(Term* thisOne)
 {
 	subTerms.erase(MultiTerm::Find(thisOne));
-}
+}*/

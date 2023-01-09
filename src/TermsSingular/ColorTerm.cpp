@@ -3,7 +3,8 @@
 using namespace std;
 
 
-ColorTerm::ColorTerm(Term* _parent, Term* _subTerm, string _color) : SingularTerm(_parent)
+ColorTerm::ColorTerm(Term* _parent, Term* _subTerm, string _color)
+: SingularTerm(_parent)
 {
 	subTerm = _subTerm;
 	color = _color;

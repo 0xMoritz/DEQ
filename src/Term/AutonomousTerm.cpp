@@ -3,7 +3,8 @@
 using namespace std;
 
 
-AutonomousTerm::AutonomousTerm(Term* _parent) : Term(_parent)
+AutonomousTerm::AutonomousTerm(Term* _parent)
+: Term(_parent)
 {
 
 }

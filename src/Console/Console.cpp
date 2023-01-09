@@ -142,8 +142,8 @@ int Console::InteractiveInput()
 	newTermios.c_lflag &= ~(ICANON | ECHO);
 	tcsetattr(fd, TCSANOW, &newTermios);
 
-	PrintTermToConsole(manip.GetRoot());
-	int depth = PrintTreeToConsole(manip.GetRoot());
+	PrintTermToConsole(manip.GetrootTerm());
+	int depth = PrintTreeToConsole(manip.GetrootTerm());
 	int res = 0;
 	char key;
 	while (1)
@@ -175,13 +175,13 @@ int Console::InteractiveInput()
 				cout << "\b"; // Bring back cursor with \b
 
 				// CheckConnections
-				bool areThereErrors = manip.CheckTermLinks(manip.GetRoot());
+				bool areThereErrors = manip.CheckTermLinks(manip.GetrootTerm());
 				if (areThereErrors)
 					manip.debugText += "[Error] Connection Check. ";
 
 				// Print status
-				PrintTermToConsole(manip.GetRoot());
-				depth = PrintTreeToConsole(manip.GetRoot());
+				PrintTermToConsole(manip.GetrootTerm());
+				depth = PrintTreeToConsole(manip.GetrootTerm());
 				//cout << (int)key << endl;
 
 				// Debug Line
@@ -207,7 +207,7 @@ int Console::InteractiveInput()
 // Standard Loop for manipulation
 void Console::ShellLoop()
 {
-	Term*& root = manip.GetRoot();
+	Term*& rootTerm = manip.GetrootTerm();
 
 	while (1)
 	{
@@ -223,15 +223,15 @@ void Console::ShellLoop()
 		}
 		else if (in == "l" || in == "latex")
 		{
-			manip.Latex(manip.GetRoot());
+			manip.Latex(manip.GetrootTerm());
 		}
 		else if (in == "t" || in == "tree")
 		{
-			PrintTreeToConsole(root);
+			PrintTreeToConsole(rootTerm);
 		}
 		else if (in == "pt" || in == "ptrTree")
 		{
-			PrintTreeToConsole(root, true);
+			PrintTreeToConsole(rootTerm, true);
 		}
 		else if (in == "x" || in == "q" || in == "quit" || in == "exit")
 		{
@@ -239,11 +239,11 @@ void Console::ShellLoop()
 		}
 		else if (in == "p" || in == "Print")
 		{
-			cout << root->Print() << endl;
+			cout << rootTerm->Print() << endl;
 		}
-		else if (in == "ptrRoot")
+		else if (in == "ptrrootTerm")
 		{
-			cout << Term::PtrAddress(root) << endl;
+			cout << Term::PtrAddress(rootTerm) << endl;
 		}
 		else if (in == "ptrCursor")
 		{
@@ -251,15 +251,15 @@ void Console::ShellLoop()
 		}
 		else if (in == "ptrLeft")
 		{
-			cout << root->PtrAddress(manip.CursorLeft()) << endl;
+			cout << rootTerm->PtrAddress(manip.CursorLeft()) << endl;
 		}
 		else if (in == "ptrRight")
 		{
-			cout << root->PtrAddress(manip.CursorRight()) << endl;
+			cout << rootTerm->PtrAddress(manip.CursorRight()) << endl;
 		}
 		else if (in == "nullptr")
 		{
-			cout << root->PtrAddress((Term*)nullptr) << endl;
+			cout << rootTerm->PtrAddress((Term*)nullptr) << endl;
 		}
 	}
 }
@@ -307,7 +307,7 @@ int Console::PressLetter(char ch)
 }
 int Console::PressEnter()
 {
-	PrintLatexToConsole(manip.GetRoot());
+	PrintLatexToConsole(manip.GetrootTerm());
 	return 2;
 }
 int Console::PressTab()

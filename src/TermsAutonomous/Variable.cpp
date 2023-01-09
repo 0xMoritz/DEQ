@@ -3,7 +3,8 @@
 using namespace std;
 
 
-Variable::Variable(Term* _parent, string _name) : AutonomousTerm(_parent)
+Variable::Variable(Term* _parent, string _name)
+: AutonomousTerm(_parent)
 {
 	treeLabel = "var";
 	name = _name;

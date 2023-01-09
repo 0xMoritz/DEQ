@@ -3,7 +3,8 @@
 using namespace std;
 
 
-Raw::Raw(Term* _parent) : AutonomousTerm(_parent)
+Raw::Raw(Term* _parent)
+: AutonomousTerm(_parent)
 {
 	treeLabel = "raw";
 	text = "";

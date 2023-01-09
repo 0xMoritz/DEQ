@@ -3,7 +3,8 @@
 using namespace std;
 
 // class Power
-Power::Power(Term* _parent, Term* _base, Term* _exponent) : BinaryTerm(_parent, _base, _exponent)
+Power::Power(Term* _parent, Term* _base, Term* _exponent)
+: BinaryTerm(_parent, _base, _exponent)
 {
 	treeLabel = "pow";
 	sub2 = _base;

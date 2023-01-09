@@ -3,7 +3,8 @@
 using namespace std;
 
 // BinaryTerm
-BinaryTerm::BinaryTerm(Term* _parent) : Term(_parent)
+BinaryTerm::BinaryTerm(Term* _parent)
+: Term(_parent)
 {
 
 }

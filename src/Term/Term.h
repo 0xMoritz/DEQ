@@ -48,4 +48,19 @@ public:
 		// This also works I think:
 		//return (dynamic_cast<T*>(t) != nullptr);
 	};
+	template<typename T> static bool IsDerivedFrom(Term* t)
+	{
+		// Also returns true if t is exactly of type T
+		if (t == nullptr)
+			return 0;
+		else
+			return (dynamic_cast<T*>(t) != nullptr);
+	};
+	static bool AreTypesEqual(const Term* t1, const Term* t2)
+	{
+		if (t1 == nullptr || t2 == nullptr)
+			return 0;
+		else
+			return typeid(*t1) == typeid(*t2);
+	}
 };

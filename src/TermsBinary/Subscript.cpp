@@ -4,7 +4,8 @@ using namespace std;
 
 
 // class Subscript
-Subscript::Subscript(Term* _parent, Term* _main, Term* _sub) : BinaryTerm(_parent, _main, _sub)
+Subscript::Subscript(Term* _parent, Term* _main, Term* _sub)
+: BinaryTerm(_parent, _main, _sub)
 {
 	treeLabel = "sub";
 }

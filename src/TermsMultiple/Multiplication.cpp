@@ -4,15 +4,15 @@ using namespace std;
 using ITERATOR = vector<Term*>::iterator;
 
 
-Multiplication::Multiplication(Term* _parent) : MultiTerm(_parent)
+Multiplication::Multiplication(Term* _parent)
+: MultiTerm(_parent)
 {
 	treeLabel = "mul";
 }
-void Multiplication::AppendRight(Term* t, char symbol)
+Multiplication::Multiplication(Term* _parent, vector<Term*> _subTerms, vector<char> _symbols)
+: MultiTerm(_parent, _subTerms, _symbols)
 {
-	subTerms.push_back(t);
-	t->SetParent(this);
-	symbols.push_back(symbol);
+	treeLabel = "mul";
 }
 string Multiplication::Print()
 {

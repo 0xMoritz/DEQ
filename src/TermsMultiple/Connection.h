@@ -16,9 +16,10 @@ class Connection : public MultiTerm
 {
 public:
 	Connection(Term* _parent);
+	Connection(Term* _parent, std::vector<Term*> _subTerms, std::vector<char> _symbols);
 	std::string Tex() override;
-	void AppendRight(Term* t);
 	std::string Print() override;
-	void InsertSubTerm(Term* relativeToTerm, Term* newTerm, int relativeIndex);
-	void RemoveSubTerm(Term* thisOne);
+	//void AppendRight(Term* t);
+	//void InsertSubTerm(Term* relativeToTerm, Term* newTerm, int relativeIndex);
+	//void RemoveSubTerm(Term* thisOne);
 };

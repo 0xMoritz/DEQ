@@ -3,7 +3,8 @@
 using namespace std;
 
 
-Cursor::Cursor(Term* _parent) : AutonomousTerm(_parent)
+Cursor::Cursor(Term* _parent)
+: AutonomousTerm(_parent)
 {
 	treeLabel = "|";
 }

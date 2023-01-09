@@ -33,20 +33,24 @@
 class Manipulator
 {
 private:
-	Term* root;
-	void Replace(Term* oldTerm, Term* newTerm); // Sets new Parent of newTerm, and links this parent's subTerm to it, Deals with terms being root
+	Term* rootTerm;
+	void Replace(Term* oldTerm, Term* newTerm); // Sets new Parent of newTerm, and links this parent's subTerm to it, Deals with terms being rootTerm
 	Term* GetRightmostTerm(Term* t);
 	Term* GetLeftmostTerm(Term* t);
 	void RemoveEmptyRaw(Raw* raw);
 	void DeleteTerm(Term* t);
 	void DeleteSubTerms(Term* t);
+	template<typename T> void SplitMultiTerm(T* multi, Term* at, MultiTerm*& left, MultiTerm*& right);
+	void SplitUntilAddition(Term* at, Term*& left, Term*& right, MultiTerm* add);
+	void SplitUntilMultiplication(Term* at, Term*& left, Term*& right);
+	void ReduceTerm(Term* t);
 
-	static Term* rootParent;
+	static Term* rootTermParent;
 public:
 	std::string debugText = "";
 	Manipulator();
-	void SetRoot(Term*& _root);
-	Term*& GetRoot();
+	void SetrootTerm(Term*& _rootTerm);
+	Term*& GetrootTerm();
 	void InsertDigit(int digit);
 	void InsertAddition(char sign);
 	void Backspace(); // Backspace keyboard action

@@ -5,27 +5,27 @@ using ITERATOR = vector<Term*>::iterator;
 
 // class Addition
 
-Addition::Addition(Term* _parent) : MultiTerm(_parent)
+Addition::Addition(Term* _parent)
+: MultiTerm(_parent)
 {
 	treeLabel = "add";
 }
-void Addition::AppendRight(Term* t, char sign)
+Addition::Addition(Term* _parent, vector<Term*> _subTerms, vector<char> _symbols)
+: MultiTerm(_parent, _subTerms, _symbols)
 {
-	subTerms.push_back(t);
-	t->SetParent(this);
-	signs.push_back(sign);
+	treeLabel = "add";
 }
 string Addition::Print()
 {
 	string s;
 	if (subTerms.size() > 0)
 	{
-		vector<char>::iterator sign = signs.begin();
-		for (ITERATOR summand = subTerms.begin(); summand != subTerms.end(); summand++, sign++)
+		vector<char>::iterator symbol = symbols.begin();
+		for (ITERATOR summand = subTerms.begin(); summand != subTerms.end(); summand++, symbol++)
 		{
 			assert(*summand!=nullptr);
-			if (*sign != ' ')
-				s += ' ' + *sign + ' ';
+			if (*symbol != ' ')
+				s += *symbol;
 			s += (**summand).Print();
 		}
 		return s;
@@ -37,12 +37,12 @@ string Addition::Tex()
 	string s;
 	if (subTerms.size() > 0)
 	{
-		vector<char>::iterator sign = signs.begin();
-		for (ITERATOR summand = ++subTerms.begin(); summand != subTerms.end(); summand++, sign++)
+		vector<char>::iterator symbol = symbols.begin();
+		for (ITERATOR summand = subTerms.begin(); summand != subTerms.end(); summand++, symbol++)
 		{
 			assert(*summand!=nullptr);
-			if (*sign != ' ')
-				s += ' ' + *sign + ' ';
+			if (*symbol != ' ')
+				s += " + ";
 			s += (**summand).GetTex();
 		}
 		return s;

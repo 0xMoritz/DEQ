@@ -14,12 +14,10 @@
 
 class Addition : public MultiTerm
 {
-	// Cursor positions should be 
 private:
-	std::vector<char> signs; // should be either signs '+', '-' or ' ' (for first summand)
 public:
 	Addition(Term* _parent);
-	void AppendRight(Term* t, char sign);
+	Addition(Term* _parent, std::vector<Term*> _subTerms, std::vector<char> _symbols);
 	std::string Tex() override;
 	std::string Print() override;
 };

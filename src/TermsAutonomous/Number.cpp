@@ -2,7 +2,8 @@
 
 using namespace std;
 
-Number::Number(Term* _parent) : AutonomousTerm(_parent)
+Number::Number(Term* _parent)
+: AutonomousTerm(_parent)
 {
 	treeLabel = "num";
 }

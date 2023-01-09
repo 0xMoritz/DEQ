@@ -2,7 +2,8 @@
 
 using namespace std;
 
-Connect2::Connect2(Term* _parent) : BinaryTerm(_parent)
+Connect2::Connect2(Term* _parent)
+: BinaryTerm(_parent)
 {
 	treeLabel = "co2";
 }

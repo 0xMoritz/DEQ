@@ -5,7 +5,8 @@ using namespace std;
 
 // class Empty
 
-Empty::Empty(Term* _parent) : AutonomousTerm(_parent)
+Empty::Empty(Term* _parent)
+: AutonomousTerm(_parent)
 {
 	treeLabel = "?";
 }

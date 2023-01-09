@@ -8,7 +8,7 @@ using namespace std;
 string FilePrinter::outputPath{"latex/"};
 // Static variable Initilization
 Cursor* Cursor::activeCursor = nullptr;
-Term* Manipulator::rootParent = new Term(nullptr);
+Term* Manipulator::rootTermParent = new Term(nullptr);
 
 int main(int argc, char **argv)
 {
