@@ -79,7 +79,12 @@ Term* Term::WithoutCursor(Term* t)
 
 bool Term::ReplaceSubTerm(Term* oldTerm, Term* newTerm)
 {
-	throw (string)"Function Replace has been called on Term" + PtrAddress(this);
+	throw (string)"Function ReplaceSubTerm has been called on Term" + PtrAddress(this);
+}
+
+bool Term::RemoveSubTerm(Term* t)
+{
+	throw (string)"Function RemoveSubTerm has been called on Term" + PtrAddress(this);
 }
 
 string Term::PtrAddress(Term* ptr)

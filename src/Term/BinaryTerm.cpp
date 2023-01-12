@@ -102,6 +102,24 @@ bool BinaryTerm::ReplaceSubTerm(Term* oldTerm, Term* newTerm)
 	}
 }
 
+bool BinaryTerm::RemoveSubTerm(Term* t)
+{
+	if (sub1 == t)
+	{
+		sub1 = nullptr;
+		return 1;
+	}
+	else if (sub2 == t)
+	{
+		sub2 = nullptr;
+		return 1;
+	}
+	else
+	{
+		return 0;
+	}
+}
+
 size_t BinaryTerm::GetNumberOfSubTerms()
 {
 	return 2;

@@ -40,6 +40,15 @@ bool SingularTerm::ReplaceSubTerm(Term* oldTerm, Term* newTerm)
 	}
 }
 
+bool SingularTerm::RemoveSubTerm(Term* t)
+{
+	if (sub == t)
+	{
+		sub = nullptr;
+		return 1;
+	}
+	return 0;
+}
 
 int SingularTerm::Tree(StringTree& tree, int& maxDepth, bool withPtr)
 {

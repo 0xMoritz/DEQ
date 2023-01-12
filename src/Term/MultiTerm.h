@@ -20,15 +20,15 @@ public:
 	MultiTerm(Term* _parent);
 	MultiTerm(Term* _parent, std::vector<Term*> _subTerms, std::vector<char> _symbols);
 	virtual ~MultiTerm();
-	std::vector<Term*>::iterator Find(Term* t);
-	std::vector<Term*>::iterator FindWithSymbol(Term* t, std::vector<char>::iterator& sIt);
+	bool FindSubTerm(Term* t, std::vector<Term*>::iterator&);
+	bool FindWithSymbol(Term* t, std::vector<Term*>::iterator& tIt, std::vector<char>::iterator& sIt);
 	std::vector<Term*> GetSubTerms() override;
 	std::vector<char> GetSymbols();
 	size_t GetNumberOfSubTerms() override;
 	int Tree(StringTree& tree, int& maxDepth, bool withPtr=false) override;
 	bool ReplaceSubTerm(Term* oldTerm, Term* newTerm) override;
 	void InsertSubTerm(Term* relativeToTerm, Term* newTerm, int relativeIndex, char symbol=' ');
-	void RemoveSubTerm(Term* thisOne);
+	bool RemoveSubTerm(Term* t) override;
 	void AppendRight(Term* t, char symbol=' ');
 	void AppendLeft(Term* t, char symbol=' ');
 };

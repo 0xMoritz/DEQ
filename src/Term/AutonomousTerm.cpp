@@ -32,6 +32,11 @@ bool AutonomousTerm::ReplaceSubTerm(Term* newTerm, Term* oldTerm)
 	return 0;
 }
 
+bool AutonomousTerm::RemoveSubTerm(Term* t)
+{
+	return 0;
+}
+
 size_t AutonomousTerm::GetNumberOfSubTerms()
 {
 	return 0;

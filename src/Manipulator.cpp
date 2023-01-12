@@ -35,48 +35,10 @@ void Manipulator::Replace(Term* oldTerm, Term* newTerm)
 	}
 	else
 	{
-		DebugLog("R2c");
-		vector<Term*> newSubTerms = newTerm->GetSubTerms();
-
-		if (Term::IsDerivedFrom<MultiTerm>(parent)
-		&& Term::IsDerivedFrom<MultiTerm>(newTerm)
-		&& Term::AreTypesEqual(newTerm, parent))
-		// The new Term's subTerms can be added into the list of subTerms here, because of associative property
-		{
-			DebugLog("R2ca");
-			if (Term::IsDerivedFrom<MultiTerm>(parent))
-			{ // parent == Addition || parent == Multiplication
-				vector<char> newSymbolList = dynamic_cast<MultiTerm*>(newTerm)->GetSymbols();
-				vector<char>::iterator symbol = newSymbolList.begin();
-				for (vector<Term*>::iterator newSubTerm = newSubTerms.begin(); newSubTerm != newSubTerms.end(); newSubTerm++, symbol++)
-				{
-					dynamic_cast<MultiTerm*>(parent)->InsertSubTerm(oldTerm, *newSubTerm, *symbol, 0);
-				}
-				dynamic_cast<MultiTerm*>(parent)->RemoveSubTerm(oldTerm);
-			}
-			else
-			{ // parent == Connection
-				assert(Term::IsType<Connection>(parent));
-				for (vector<Term*>::iterator newSubTerm = newSubTerms.begin(); newSubTerm != newSubTerms.end(); newSubTerm++)
-				{
-					dynamic_cast<Connection*>(parent)->InsertSubTerm(oldTerm, *newSubTerm, 0);
-				}
-				dynamic_cast<Connection*>(parent)->RemoveSubTerm(oldTerm);
-			}
-			oldTerm->SetParent(nullptr);
-			DeleteTerm(newTerm);
-		}
-		else
-		{
-			DebugLog("R2cb");
-			// Replace
-			DebugLog(typeid(parent).name());
-			DebugLog(Term::PtrAddress(parent));
-			parent->ReplaceSubTerm(oldTerm, newTerm);
-			DebugLog("R2cb2");
-			oldTerm->SetParent(nullptr);
-		}
+		// Replace
+		parent->ReplaceSubTerm(oldTerm, newTerm);
 	}
+	oldTerm->SetParent(nullptr);
 }
 
 void Manipulator::SetrootTerm(Term*& _rootTerm)
@@ -209,27 +171,35 @@ void Manipulator::InsertAddition(char sign)
 	Term* left = nullptr; // Term left to the new Plus
 	Term* right = nullptr;
 	SplitUntilAddition(c, left, right, add);
-	DebugLog("CC");
 	add->AppendRight(left, ' ');
 	add->AppendRight(right, '+');
 
+	assert (c != rootTerm);
 	Replace(c->GetParent(), add);
-	DebugLog("AA");
-	ReduceTerm(left);
-	ReduceTerm(right);
-	DebugLog("BB");
-	// TODO Make Reduce Term recursive and incorparate Multiterms on differen levels
+	//RecursiveCleanUp(rootTerm);
 }
 
 void Manipulator::CursorMoveLeft()
 {
 	Cursor* c = Cursor::GetActive();
-	if (CursorLeft() == nullptr)
+	if (GetLeftmostTerm(rootTerm) == c)
 		return;
-	if (Term::IsType<Connection>(c->GetParent()))
+	else if (Term::IsType<Connection>(c->GetParent()))
 	{
 		Connection* connect = dynamic_cast<Connection*>(c->GetParent());
-		if (Term::IsType<Raw>(CursorLeft())) // Left already has a Raw type
+
+		if (GetLeftmostTerm(connect) == c)
+		{
+			DebugLog("Under Construction");
+			Term* left = CursorLeft();
+			connect->RemoveSubTerm(c);
+			Connection* newConnection = new Connection(left->GetParent());
+			Replace(left, newConnection);
+			newConnection->AppendRight(left);
+			newConnection->AppendRight(c);
+			RecursiveCleanUp(rootTerm);
+		}
+		else if (Term::IsType<Raw>(CursorLeft())) // Left already has a Raw type
 		{
 			Raw* left = dynamic_cast<Raw*>(CursorLeft());
 			string swap = left->BackspaceContent();
@@ -261,7 +231,7 @@ void Manipulator::CursorMoveRight()
 {
 	// Analogous to CursorMoveLeft - so far
 	Cursor* c = Cursor::GetActive();
-	if (CursorRight() == nullptr)
+	if (GetRightmostTerm(rootTerm) == c)
 		return;
 	if (Term::IsType<Connection>(c->GetParent()))
 	{
@@ -374,29 +344,28 @@ int Manipulator::Latex(Term*& t)
 	return 0;
 }
 
-bool Manipulator::CheckTermLinks(Term*& t)
+bool Manipulator::CheckTermLinks(Term*& t, vector<Term*>& errorTerms)
 {
+	bool areThereErrors = 0;
 	// Recursion
 	if (t == nullptr)
-	{
-		return 1;
-	}
+	{ errorTerms.push_back(t); areThereErrors = 1; }
 	else if (t == rootTerm)
 	{
 		if (t->GetParent() != rootTermParent)
-			return 1;
+		{ errorTerms.push_back(t); areThereErrors = 1; }
 	}
 	vector<Term*> subTerms = t->GetSubTerms();
 	for (vector<Term*>::iterator it = subTerms.begin(); it != subTerms.end(); it++)
 	{
 		if (*it == nullptr)
-			return 1;
+		{ errorTerms.push_back(*it); areThereErrors = 1; }
 		else if ((*it)->GetParent() != t)
-			return 1;
-		else if (CheckTermLinks(*it))
-			return 1;
+		{ errorTerms.push_back(*it); areThereErrors = 1; }
+		else if (CheckTermLinks(*it, errorTerms))
+		{ areThereErrors = 1; }
 	}
-	return 0;
+	return areThereErrors;
 }
 
 void Manipulator::DeleteTerm(Term* t)
@@ -413,7 +382,7 @@ void Manipulator::DeleteTerm(Term* t)
 	}
 	// Pointer from parent
 	if (t->GetParent() != nullptr && t->GetParent() != rootTermParent)
-		t->GetParent()->ReplaceSubTerm(t, nullptr);
+		t->GetParent()->RemoveSubTerm(t);
 
 	// Pointer from rootTerm
 	if (rootTerm == t)
@@ -469,12 +438,10 @@ void Manipulator::SplitMultiTerm(T* multi, Term* at, MultiTerm*& left, MultiTerm
 	vector<char> leftSymbols;
 	vector<Term*> rightTerms;
 	vector<char> rightSymbols;
-	DebugLog("1");
 	// Go from the start to the cutPos and add all subTerms to the leftTerms list, then return a multiion with that List or the Term itself if it's only one. For non return nullptr
 	// reduce reduces left and right to hold only one Term or empty
 	for (; *termIt != at; termIt++, symbolIt++)
 	{
-		DebugLog((string)"first" + typeid(**termIt).name());
 		leftTerms.push_back(*termIt);
 		leftSymbols.push_back(*symbolIt);
 	}
@@ -482,12 +449,10 @@ void Manipulator::SplitMultiTerm(T* multi, Term* at, MultiTerm*& left, MultiTerm
 	// Do the same for the right part, after the cutPos
 	for (; termIt != subTerms.end(); termIt++, symbolIt++)
 	{
-		DebugLog((string)"second" + typeid(**termIt).name());
 		rightTerms.push_back(*termIt);
 		rightSymbols.push_back(*symbolIt);
 	}
 	right = new T(multi->GetParent(), rightTerms, rightSymbols);
-	DebugLog("3");
 	// Delete the old multiion
 	//DeleteTerm(multi);
 }
@@ -500,11 +465,10 @@ void Manipulator::SplitUntilAddition(Term* at, Term*& left, Term*& right, MultiT
 	Term* cut = at;
 	while (0==Term::IsType<Addition>(cut) && cut != rootTerm) // Is not addition TODO or brackets
 	{
-		DebugLog(typeid(*cut).name());
 		Term* parent = cut->GetParent();
-		DebugLog(typeid(*parent).name());
 		while (0==Term::IsDerivedFrom<MultiTerm>(parent) && cut != rootTerm)
 		{
+			// This must be wrong, should maybe cut be appended on the line of newRight or smthing?
 			DeleteTerm(cut);
 			cut = parent;
 			parent = cut->GetParent();
@@ -525,7 +489,6 @@ void Manipulator::SplitUntilAddition(Term* at, Term*& left, Term*& right, MultiT
 		if (right != nullptr)
 			newRight->AppendLeft(right);
 
-		DebugLog("OCHNEE");
 		right = newRight;
 		left = newLeft; // TODO vielleicht muss ich das rekursiv machen, weil ich sonst immer at lösche?
 
@@ -534,6 +497,52 @@ void Manipulator::SplitUntilAddition(Term* at, Term*& left, Term*& right, MultiT
 			DeleteTerm(cut);
 		cut = parent;
 	}
+}
+
+void Manipulator::RecursiveCleanUp(Term* t)
+{
+	// Apply the RecursiveCleanUp from the branches first
+	DebugLog(Term::PtrAddress(t));
+	if (t->GetNumberOfSubTerms() == 0)
+		return;
+	for (vector<Term*>::iterator it = t->GetSubTerms().begin(); it != t->GetSubTerms().end(); it++)
+	{
+		Term* subTerm = *it;
+		RecursiveCleanUp(subTerm);
+		// Now incorporate subTerms if they are of the same MultiTerm Type
+		if (Term::IsDerivedFrom<MultiTerm>(t)
+		&& Term::IsDerivedFrom<MultiTerm>(subTerm)
+		&& Term::AreTypesEqual(t, subTerm))
+		// The new Term's subTerms can be added into the list of subTerms here, because of associative property
+		{
+			vector<Term*> newSubTerms = subTerm->GetSubTerms();
+			vector<char> newSymbolList = dynamic_cast<MultiTerm*>(subTerm)->GetSymbols();
+
+			vector<char>::iterator newSymbol = newSymbolList.begin();
+			vector<Term*>::iterator newSubTerm = newSubTerms.begin();
+			// For the first term there might be the case that the old subTerm has a minus in front
+			if (Term::IsType<Addition>(t))
+			{
+				vector<char>::iterator oldTermSymbol;
+				vector<Term*>::iterator tIt;
+				dynamic_cast<MultiTerm*>(t)->FindWithSymbol(subTerm, tIt, oldTermSymbol);
+				char combinedSymbol = ((*oldTermSymbol == '-' && *newSymbol == '-') || (*oldTermSymbol == '+' && *newSymbol == '+'))? '+' : '-';
+				dynamic_cast<MultiTerm*>(t)->InsertSubTerm(subTerm, *newSubTerm, combinedSymbol, 0);
+				newSymbol++;
+				newSubTerm++;
+			}
+
+			for (; newSubTerm != newSubTerms.end(); newSubTerm++, newSymbol++)
+			{
+				dynamic_cast<MultiTerm*>(t)->InsertSubTerm(subTerm, *newSubTerm, *newSymbol, 0);
+			}
+			dynamic_cast<MultiTerm*>(t)->RemoveSubTerm(subTerm);
+			subTerm->SetParent(nullptr);
+			DeleteTerm(subTerm);
+		}
+	}
+	// Reduce this term if it has no subTerms
+	ReduceTerm(t);
 }
 
 void Manipulator::ReduceTerm(Term* t)
@@ -550,7 +559,6 @@ void Manipulator::ReduceTerm(Term* t)
 		// Replace the multiTerm with its only subTerm
 		else if (subTerms.size() == 1)
 		{
-			DebugLog(typeid(t->GetParent()).name());
 			Replace(t, subTerms.front());
 			DeleteTerm(t);
 		}

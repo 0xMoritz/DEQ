@@ -21,6 +21,7 @@ public:
 	std::vector<Term*> GetSubTerms() override;
 	Term* GetSubTerm();
 	bool ReplaceSubTerm(Term* oldTerm, Term* newTerm) override;
+	bool RemoveSubTerm(Term* t) override;
 	int Tree(StringTree& tree, int& maxDepth, bool withPtr=false);
 	size_t GetNumberOfSubTerms() override;
 };

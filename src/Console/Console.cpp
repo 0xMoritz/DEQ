@@ -175,9 +175,16 @@ int Console::InteractiveInput()
 				cout << "\b"; // Bring back cursor with \b
 
 				// CheckConnections
-				bool areThereErrors = manip.CheckTermLinks(manip.GetrootTerm());
+				vector<Term*> errorTerms;
+				bool areThereErrors = manip.CheckTermLinks(manip.GetrootTerm(), errorTerms);
 				if (areThereErrors)
-					manip.debugText += "[Error] Connection Check. ";
+				{
+					vector<Term*>::iterator errorIt = errorTerms.begin();
+					manip.debugText += "[Error] Connection Check at " + Term::PtrAddress(*errorIt);
+					for (errorIt++; errorIt != errorTerms.end(); errorIt++)
+						manip.debugText += ", " + Term::PtrAddress(*errorIt);
+					manip.debugText += ". ";
+				};
 
 				// Print status
 				PrintTermToConsole(manip.GetrootTerm());
@@ -260,6 +267,25 @@ void Console::ShellLoop()
 		else if (in == "nullptr")
 		{
 			cout << rootTerm->PtrAddress((Term*)nullptr) << endl;
+		}
+		else if (in == "RecursiveCleanUp")
+		{
+			manip.RecursiveCleanUp(rootTerm);
+		}
+		else if (in == "CheckLinks")
+		{
+			vector<Term*> errorTerms;
+			bool areThereErrors = manip.CheckTermLinks(manip.GetrootTerm(), errorTerms);
+			if (areThereErrors)
+			{
+				vector<Term*>::iterator errorIt = errorTerms.begin();
+				manip.debugText += "[Error] Connection Check at " + Term::PtrAddress(*errorIt);
+				for (errorIt++; errorIt != errorTerms.end(); errorIt++)
+					manip.debugText += ", " + Term::PtrAddress(*errorIt);
+				manip.debugText += ". ";
+			}
+			else
+				cout << "No Errors found" << endl;
 		}
 	}
 }

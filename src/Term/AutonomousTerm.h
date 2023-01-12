@@ -21,4 +21,5 @@ public:
 	int Tree(StringTree& tree, int& maxDepth, bool withPtr=false) override;
 	bool ReplaceSubTerm(Term* oldTerm, Term* newTerm) override;
 	size_t GetNumberOfSubTerms() override;
+	bool RemoveSubTerm(Term* t) override;
 };

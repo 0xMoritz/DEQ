@@ -8,7 +8,12 @@ MultiTerm::MultiTerm(Term* _parent)
 : Term(_parent)
 { }
 MultiTerm::MultiTerm(Term* _parent, vector<Term*> _subTerms, vector<char> _symbols) : Term(_parent), subTerms(_subTerms), symbols(_symbols)
-{ }
+{
+	for (vector<Term*>::iterator it = subTerms.begin(); it != subTerms.end(); it++)
+	{
+		(*it)->SetParent(this);
+	}
+}
 MultiTerm::~MultiTerm()
 {
 	//cout << "killing MultiTerm. ";
@@ -19,16 +24,33 @@ vector<Term*> MultiTerm::GetSubTerms()
 	return subTerms;
 }
 
-vector<Term*>::iterator MultiTerm::Find(Term* t)
+bool MultiTerm::FindSubTerm(Term* t, vector<Term*>::iterator& tIt)
 {
-	ITERATOR it = subTerms.begin();
-	for (; it != subTerms.end(); it++)
+	tIt = subTerms.begin();
+	for (; tIt != subTerms.end(); tIt++)
 	{
-		if (*it == t)
-			return it;
+		if (*tIt == t)
+		{
+			return 1;
+		}
 	}
-	throw (string)"Term not Found.";
+	return 0;
 }
+
+bool MultiTerm::FindWithSymbol(Term* t, vector<Term*>::iterator& tIt, vector<char>::iterator& sIt)
+{
+	tIt = subTerms.begin();
+	sIt = symbols.begin();
+	for (; tIt != subTerms.end(); tIt++, sIt++)
+	{
+		if (*tIt == t)
+		{
+			return 1;
+		}
+	}
+	return 0;
+}
+
 
 int MultiTerm::Tree(StringTree& tree, int& maxDepth, bool withPtr)
 {
@@ -62,18 +84,24 @@ bool MultiTerm::ReplaceSubTerm(Term* oldTerm, Term* newTerm)
 	{
 		// Set links
 		oldTerm->SetParent(nullptr);
-		if (newTerm != nullptr)
-			newTerm->SetParent(this);
+		//if (newTerm != nullptr) // Alread happens in InsertSubTerm
+		//	newTerm->SetParent(this);
+
 
 		// Find oldTerm and replace
-		for (ITERATOR subTerm = subTerms.begin(); subTerm != subTerms.end(); subTerm++)
+		vector<char>::iterator sIt; // old symbol
+		vector<Term*>::iterator tIt; //
+		FindWithSymbol(oldTerm, tIt, sIt);
+		InsertSubTerm(oldTerm, newTerm, 0, *sIt);
+		RemoveSubTerm(oldTerm);
+		/*for (ITERATOR subTerm = subTerms.begin(); subTerm != subTerms.end(); subTerm++)
 		{
 			if (oldTerm == *subTerm)
 			{
 				*subTerm = newTerm;
 				return 1;
 			}
-		}
+		}*/
 	}
 	return 0;
 }
@@ -89,6 +117,7 @@ void MultiTerm::AppendRight(Term* t, char symbol)
 	t->SetParent(this);
 	subTerms.push_back(t);
 	symbols.push_back(symbol);
+	DebugLog("SettingParentof " + Term::PtrAddress(t));
 }
 void MultiTerm::AppendLeft(Term* t, char symbol)
 {
@@ -102,39 +131,30 @@ vector<char> MultiTerm::GetSymbols()
 	return symbols;
 }
 
-vector<Term*>::iterator MultiTerm::FindWithSymbol(Term* t, vector<char>::iterator& sIt)
-{
-	vector<Term*>::iterator it = subTerms.begin();
-	sIt = symbols.begin();
-	for (; it != subTerms.end(); it++, sIt++)
-	{
-		if (*it == t)
-		{
-			return it;
-		}
-	}
-	throw (string)"Term not Found.";
-}
-
-
 void MultiTerm::InsertSubTerm(Term* relativeToTerm, Term* newTerm, int relativeIndex, char symbol)
 {
 	vector<char>::iterator sIt;
-	ITERATOR at = MultiTerm::FindWithSymbol(relativeToTerm, sIt);
+	vector<Term*>::iterator tIt;
+	MultiTerm::FindWithSymbol(relativeToTerm, tIt, sIt);
 	assert(relativeIndex == 1 || relativeIndex == 0); // 0: before, 1: after relativeToTerm
-	at += relativeIndex;
+	tIt += relativeIndex;
 	sIt += relativeIndex;
-	assert(at != --subTerms.begin());
-	assert(at != ++subTerms.end());
-	subTerms.insert(at, newTerm);
+	assert(tIt != --subTerms.begin());
+	assert(tIt != ++subTerms.end());
+	subTerms.insert(tIt, newTerm);
 	symbols.insert(sIt, symbol);
 	newTerm->SetParent(this);
 }
 
-void MultiTerm::RemoveSubTerm(Term* thisOne)
+bool MultiTerm::RemoveSubTerm(Term* t)
 {
 	vector<char>::iterator sIt;
-	ITERATOR at = MultiTerm::FindWithSymbol(thisOne, sIt);
-	subTerms.erase(at);
-	symbols.erase(sIt);
+	vector<Term*>::iterator tIt;
+	bool found = MultiTerm::FindWithSymbol(t, tIt, sIt);
+	if (found)
+	{
+		subTerms.erase(tIt);
+		symbols.erase(sIt);
+	}
+	return found;
 }

@@ -58,7 +58,8 @@ public:
 	void CursorMoveRight();
 	void CursorMoveLeft();
 	int Latex(Term*& t);
-	bool CheckTermLinks(Term*& t); // Returns 0 if everything is fine, 1 when errors are found
 	Term* CursorLeft();
 	Term* CursorRight();
+	bool CheckTermLinks(Term*& t, std::vector<Term*>& errorTerms); // Returns 0 if everything is fine, 1 when errors are found
+	void RecursiveCleanUp(Term* t);
 };

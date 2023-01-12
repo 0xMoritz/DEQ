@@ -27,5 +27,6 @@ public:
 	void SetSub2(Term* newSub2);
 	int Tree(StringTree& tree, int& maxDepth, bool withPtr=false) override;
 	bool ReplaceSubTerm(Term* oldTerm, Term* newTerm) override;
+	bool RemoveSubTerm(Term* t) override;
 	size_t GetNumberOfSubTerms() override;
 };

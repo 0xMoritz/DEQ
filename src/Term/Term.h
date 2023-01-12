@@ -33,6 +33,7 @@ public:
 	virtual int Tree(StringTree& tree, int& maxDepth, bool withPtr=false);
 	int TreeWithAddress(StringTree& tree, int& maxDepth);
 	virtual bool ReplaceSubTerm(Term* oldTerm, Term* newTerm); // Return 1 if Term was found and replaced, 0 if not
+	virtual bool RemoveSubTerm(Term* t); // Return 1 if Term was removed, 0 if not
 	virtual size_t GetNumberOfSubTerms();
 
 	static std::string PtrAddress(Term* ptr);
